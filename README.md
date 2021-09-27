@@ -1,2 +1,2 @@
 # hitomidb
-hitomidb is a expermental database
+hitomidb is a experimental database
