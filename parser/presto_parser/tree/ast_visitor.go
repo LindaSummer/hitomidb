@@ -5,6 +5,7 @@ import (
 	"hitomidb/parser/presto_parser/tree/relation"
 	"hitomidb/parser/presto_parser/tree/relation/query_body"
 	"hitomidb/parser/presto_parser/tree/select_item"
+	stmt "hitomidb/parser/presto_parser/tree/statement"
 	"hitomidb/parser/presto_parser/tree/table_element"
 )
 
@@ -13,6 +14,9 @@ type AstVisitor interface {
 
 	VisitTableElement(tableElement *table_element.TableElement) interface{}
 	VisitSingleColumn(singleColumn *select_item.SingleColumn) interface{}
+
+	VisitStatement(statement *stmt.Statement) interface{}
+	VisitQuery(query *stmt.Query) interface{}
 
 	VisitRelation(relation *relation.Relation) interface{}
 	VisitQueryBody(queryBody *query_body.QueryBody) interface{}
