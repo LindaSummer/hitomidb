@@ -1,4 +1,4 @@
-package expression
+package tree
 
 type ComparisonExpression struct {
 	*Expression

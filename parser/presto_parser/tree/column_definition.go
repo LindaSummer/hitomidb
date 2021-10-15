@@ -1,4 +1,4 @@
-package table_element
+package tree
 
 type ColumnDefinition struct {
 	*TableElement

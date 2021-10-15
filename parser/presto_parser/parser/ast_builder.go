@@ -1,6 +1,8 @@
 package parser
 
-import stmt "hitomidb/parser/presto_parser/tree/statement"
+import (
+	stmt "hitomidb/parser/presto_parser/tree"
+)
 
 type AstBuilder struct {
 	*BaseSqlBaseVisitor

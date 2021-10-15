@@ -1,7 +1,6 @@
-package expression
+package tree
 
 import (
-	"hitomidb/parser/presto_parser/tree"
 	"regexp"
 
 	"github.com/pkg/errors"
@@ -15,7 +14,7 @@ type Identifier struct {
 
 var delimitedReg = regexp.MustCompile(`[a-zA-Z_]([a-zA-Z0-9_:@])*`)
 
-func NewIdentifierWithDelimited(value string, delimited bool, location ...*tree.NodeLocation) (*Identifier, error) {
+func NewIdentifierWithDelimited(value string, delimited bool, location ...*NodeLocation) (*Identifier, error) {
 	if delimited || delimitedReg.Match([]byte(value)) {
 		return nil, errors.WithStack(errors.Errorf("identifier has invalid characters: %s", value))
 	}
@@ -27,7 +26,7 @@ func NewIdentifierWithDelimited(value string, delimited bool, location ...*tree.
 	}, nil
 }
 
-func NewIdentifier(value string, location ...*tree.NodeLocation) *Identifier {
+func NewIdentifier(value string, location ...*NodeLocation) *Identifier {
 	return &Identifier{
 		Expression: NewExpression(location...),
 		value:      value,
@@ -43,10 +42,10 @@ func (i *Identifier) Delimited() bool {
 	return i.delimited
 }
 
-func (i *Identifier) Accept(visitor tree.AstVisitor) interface{} {
+func (i *Identifier) Accept(visitor AstVisitor) interface{} {
 	return visitor.VisitIdentifier(i)
 }
 
-func (i *Identifier) Children() []tree.Node {
-	return tree.EmptyChildren
+func (i *Identifier) Children() []Node {
+	return EmptyChildren
 }

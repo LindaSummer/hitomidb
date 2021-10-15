@@ -2,24 +2,23 @@ package tree
 
 import (
 	"context"
-	expr "hitomidb/parser/presto_parser/tree/expression"
 )
 
 type Property struct {
 	*BaseNode
-	name  *expr.Identifier
-	value *expr.Expression
+	name  *Identifier
+	value *Expression
 }
 
-func (p *Property) Name() *expr.Identifier {
+func (p *Property) Name() *Identifier {
 	return p.name
 }
 
-func (p *Property) Value() *expr.Expression {
+func (p *Property) Value() *Expression {
 	return p.value
 }
 
-func NewProperty(name *expr.Identifier, value *expr.Expression, location ...*NodeLocation) *Property {
+func NewProperty(name *Identifier, value *Expression, location ...*NodeLocation) *Property {
 	return &Property{
 		// TODO fill context
 		BaseNode: NewBaseNode(context.TODO()),

@@ -2,7 +2,6 @@ package tree
 
 import (
 	"context"
-	"hitomidb/parser/presto_parser/util"
 )
 
 type Node interface {
@@ -21,7 +20,7 @@ type BaseNode struct {
 }
 
 func NewBaseNode(ctx context.Context, location ...*NodeLocation) *BaseNode {
-	return &BaseNode{ctx: ctx, location: util.GetOptionalNodeLocation(location...)}
+	return &BaseNode{ctx: ctx, location: GetOptionalNodeLocation(location...)}
 }
 
 func (b *BaseNode) Location() *NodeLocation {
