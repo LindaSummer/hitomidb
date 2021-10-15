@@ -1,4 +1,4 @@
-// Code generated from D:/code/go_mod/hitomidb/parser/presto_parser/parser\SqlBase.g4 by ANTLR 4.9.1. DO NOT EDIT.
+// Code generated from parser/presto_parser/parser/SqlBase.g4 by ANTLR 4.8. DO NOT EDIT.
 
 package parser // SqlBase
 import (
@@ -950,6 +950,9 @@ var parserATN = []uint16{
 	1702, 1708, 1730, 1733, 1742, 1745, 1748, 1768, 1779, 1785, 1792, 1801,
 	1808, 1814, 1821, 1827, 1834, 1841, 1849, 1854,
 }
+var deserializer = antlr.NewATNDeserializer(nil)
+var deserializedATN = deserializer.DeserializeFromUInt16(parserATN)
+
 var literalNames = []string{
 	"", "'.'", "'('", "')'", "','", "'?'", "'->'", "'['", "']'", "'=>'", "'ADD'",
 	"'ADMIN'", "'ALL'", "'ALTER'", "'ANALYZE'", "'AND'", "'ANY'", "'ARRAY'",
@@ -1040,25 +1043,21 @@ var ruleNames = []string{
 	"levelOfIsolation", "callArgument", "privilege", "qualifiedName", "grantor",
 	"principal", "roles", "identifier", "number", "nonReserved",
 }
+var decisionToDFA = make([]*antlr.DFA, len(deserializedATN.DecisionToState))
+
+func init() {
+	for index, ds := range deserializedATN.DecisionToState {
+		decisionToDFA[index] = antlr.NewDFA(ds, index)
+	}
+}
 
 type SqlBaseParser struct {
 	*antlr.BaseParser
 }
 
-// NewSqlBaseParser produces a new parser instance for the optional input antlr.TokenStream.
-//
-// The *SqlBaseParser instance produced may be reused by calling the SetInputStream method.
-// The initial parser configuration is expensive to construct, and the object is not thread-safe;
-// however, if used within a Golang sync.Pool, the construction cost amortizes well and the
-// objects can be used in a thread-safe manner.
 func NewSqlBaseParser(input antlr.TokenStream) *SqlBaseParser {
 	this := new(SqlBaseParser)
-	deserializer := antlr.NewATNDeserializer(nil)
-	deserializedATN := deserializer.DeserializeFromUInt16(parserATN)
-	decisionToDFA := make([]*antlr.DFA, len(deserializedATN.DecisionToState))
-	for index, ds := range deserializedATN.DecisionToState {
-		decisionToDFA[index] = antlr.NewDFA(ds, index)
-	}
+
 	this.BaseParser = antlr.NewBaseParser(input)
 
 	this.Interpreter = antlr.NewParserATNSimulator(this, deserializedATN, decisionToDFA, antlr.NewPredictionContextCache())

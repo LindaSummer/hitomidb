@@ -1,4 +1,4 @@
-// Code generated from D:/code/go_mod/hitomidb/parser/presto_parser/parser\SqlBase.g4 by ANTLR 4.9.1. DO NOT EDIT.
+// Code generated from parser/presto_parser/parser/SqlBase.g4 by ANTLR 4.8. DO NOT EDIT.
 
 package parser
 
@@ -1013,6 +1013,9 @@ var serializedLexerAtn = []uint16{
 	2173, 2178, 2190, 2194, 2197, 2207, 2218, 3, 2, 3, 2,
 }
 
+var lexerDeserializer = antlr.NewATNDeserializer(nil)
+var lexerAtn = lexerDeserializer.DeserializeFromUInt16(serializedLexerAtn)
+
 var lexerChannelNames = []string{
 	"DEFAULT_TOKEN_CHANNEL", "HIDDEN",
 }
@@ -1138,20 +1141,18 @@ type SqlBaseLexer struct {
 	// TODO: EOF string
 }
 
-// NewSqlBaseLexer produces a new lexer instance for the optional input antlr.CharStream.
-//
-// The *SqlBaseLexer instance produced may be reused by calling the SetInputStream method.
-// The initial lexer configuration is expensive to construct, and the object is not thread-safe;
-// however, if used within a Golang sync.Pool, the construction cost amortizes well and the
-// objects can be used in a thread-safe manner.
-func NewSqlBaseLexer(input antlr.CharStream) *SqlBaseLexer {
-	l := new(SqlBaseLexer)
-	lexerDeserializer := antlr.NewATNDeserializer(nil)
-	lexerAtn := lexerDeserializer.DeserializeFromUInt16(serializedLexerAtn)
-	lexerDecisionToDFA := make([]*antlr.DFA, len(lexerAtn.DecisionToState))
+var lexerDecisionToDFA = make([]*antlr.DFA, len(lexerAtn.DecisionToState))
+
+func init() {
 	for index, ds := range lexerAtn.DecisionToState {
 		lexerDecisionToDFA[index] = antlr.NewDFA(ds, index)
 	}
+}
+
+func NewSqlBaseLexer(input antlr.CharStream) *SqlBaseLexer {
+
+	l := new(SqlBaseLexer)
+
 	l.BaseLexer = antlr.NewBaseLexer(input)
 	l.Interpreter = antlr.NewLexerATNSimulator(l, lexerAtn, lexerDecisionToDFA, antlr.NewPredictionContextCache())
 
