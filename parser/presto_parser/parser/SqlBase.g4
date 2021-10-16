@@ -333,14 +333,14 @@ expression
     ;
 
 booleanExpression
-    : valueExpression predicate[$valueExpression.ctx]?             #predicated
+    : valueExpression predicate?             #predicated
     | NOT booleanExpression                                        #logicalNot
     | left=booleanExpression operator=AND right=booleanExpression  #logicalBinary
     | left=booleanExpression operator=OR right=booleanExpression   #logicalBinary
     ;
 
 // workaround for https://github.com/antlr/antlr4/issues/780
-predicate[ParserRuleContext value]
+predicate
     : comparisonOperator right=valueExpression                            #comparison
     | comparisonOperator comparisonQuantifier '(' query ')'               #quantifiedComparison
     | NOT? BETWEEN lower=valueExpression AND upper=valueExpression        #between
@@ -482,10 +482,10 @@ over
     ;
 
 windowFrame
-    : frameType=RANGE start=frameBound
-    | frameType=ROWS start=frameBound
-    | frameType=RANGE BETWEEN start=frameBound AND end=frameBound
-    | frameType=ROWS BETWEEN start=frameBound AND end=frameBound
+    : frameType=RANGE start_bound=frameBound
+    | frameType=ROWS start_bound=frameBound
+    | frameType=RANGE BETWEEN start_bound=frameBound AND end_bound=frameBound
+    | frameType=ROWS BETWEEN start_bound=frameBound AND end_bound=frameBound
     ;
 
 frameBound

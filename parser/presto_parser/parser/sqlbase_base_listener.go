@@ -1,4 +1,4 @@
-// Code generated from parser/presto_parser/parser/SqlBase.g4 by ANTLR 4.8. DO NOT EDIT.
+// Code generated from D:/code/go_mod/hitomidb/parser/presto_parser/parser\SqlBase.g4 by ANTLR 4.9.1. DO NOT EDIT.
 
 package parser // SqlBase
 import "github.com/antlr/antlr4/runtime/Go/antlr"

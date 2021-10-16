@@ -16,4 +16,6 @@ type AstVisitor interface {
 
 	VisitExpression(expression *Expression) interface{}
 	VisitIdentifier(identifier *Identifier) interface{}
+
+	VisitSortItem(sortItem *SortItem) interface{}
 }

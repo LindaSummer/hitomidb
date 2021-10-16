@@ -7,6 +7,7 @@ import (
 type Node interface {
 	Accept(visitor AstVisitor) interface{}
 	Location() *NodeLocation
+	SetLocation(*NodeLocation)
 	Children() []Node
 	Text() string
 }
@@ -25,4 +26,8 @@ func NewBaseNode(ctx context.Context, location ...*NodeLocation) *BaseNode {
 
 func (b *BaseNode) Location() *NodeLocation {
 	return b.location
+}
+
+func (b *BaseNode) SetLocation(location *NodeLocation) {
+	b.location = location
 }

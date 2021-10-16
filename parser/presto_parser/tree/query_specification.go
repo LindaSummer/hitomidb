@@ -5,15 +5,11 @@ type QuerySpecification struct {
 	selectStmt *SelectStmt
 	from       *Relation
 	where      *Expression
-	// TODO add `group by`
-	//groupBy	*GroupBy
-	//TODO add having
-	//having *Having
-	// TODO add `order by`
-	//orderBy *OrderBy
-	//TODO add offset
-	//offset *Offset
-	limit *string
+	groupBy    *GroupBy
+	having     *Expression
+	orderBy    *OrderBy
+	offset     *Offset
+	limit      *string
 }
 
 func (q *QuerySpecification) SelectStmt() *SelectStmt {
@@ -36,6 +32,9 @@ func NewQuerySpecification(
 	selectStmt *SelectStmt,
 	from *Relation,
 	where *Expression,
+	groupBy *GroupBy,
+	having *Expression,
+	orderBy *OrderBy,
 	limit *string,
 	location ...*NodeLocation,
 ) *QuerySpecification {

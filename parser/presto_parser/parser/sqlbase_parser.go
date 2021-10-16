@@ -1,4 +1,4 @@
-// Code generated from parser/presto_parser/parser/SqlBase.g4 by ANTLR 4.8. DO NOT EDIT.
+// Code generated from D:/code/go_mod/hitomidb/parser/presto_parser/parser\SqlBase.g4 by ANTLR 4.9.1. DO NOT EDIT.
 
 package parser // SqlBase
 import (
@@ -950,9 +950,6 @@ var parserATN = []uint16{
 	1702, 1708, 1730, 1733, 1742, 1745, 1748, 1768, 1779, 1785, 1792, 1801,
 	1808, 1814, 1821, 1827, 1834, 1841, 1849, 1854,
 }
-var deserializer = antlr.NewATNDeserializer(nil)
-var deserializedATN = deserializer.DeserializeFromUInt16(parserATN)
-
 var literalNames = []string{
 	"", "'.'", "'('", "')'", "','", "'?'", "'->'", "'['", "']'", "'=>'", "'ADD'",
 	"'ADMIN'", "'ALL'", "'ALTER'", "'ANALYZE'", "'AND'", "'ANY'", "'ARRAY'",
@@ -1043,21 +1040,25 @@ var ruleNames = []string{
 	"levelOfIsolation", "callArgument", "privilege", "qualifiedName", "grantor",
 	"principal", "roles", "identifier", "number", "nonReserved",
 }
-var decisionToDFA = make([]*antlr.DFA, len(deserializedATN.DecisionToState))
-
-func init() {
-	for index, ds := range deserializedATN.DecisionToState {
-		decisionToDFA[index] = antlr.NewDFA(ds, index)
-	}
-}
 
 type SqlBaseParser struct {
 	*antlr.BaseParser
 }
 
+// NewSqlBaseParser produces a new parser instance for the optional input antlr.TokenStream.
+//
+// The *SqlBaseParser instance produced may be reused by calling the SetInputStream method.
+// The initial parser configuration is expensive to construct, and the object is not thread-safe;
+// however, if used within a Golang sync.Pool, the construction cost amortizes well and the
+// objects can be used in a thread-safe manner.
 func NewSqlBaseParser(input antlr.TokenStream) *SqlBaseParser {
 	this := new(SqlBaseParser)
-
+	deserializer := antlr.NewATNDeserializer(nil)
+	deserializedATN := deserializer.DeserializeFromUInt16(parserATN)
+	decisionToDFA := make([]*antlr.DFA, len(deserializedATN.DecisionToState))
+	for index, ds := range deserializedATN.DecisionToState {
+		decisionToDFA[index] = antlr.NewDFA(ds, index)
+	}
 	this.BaseParser = antlr.NewBaseParser(input)
 
 	this.Interpreter = antlr.NewParserATNSimulator(this, deserializedATN, decisionToDFA, antlr.NewPredictionContextCache())
@@ -16674,7 +16675,6 @@ func (s *LogicalNotContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 
 type PredicatedContext struct {
 	*BooleanExpressionContext
-	_valueExpression IValueExpressionContext
 }
 
 func NewPredicatedContext(parser antlr.Parser, ctx antlr.ParserRuleContext) *PredicatedContext {
@@ -16686,10 +16686,6 @@ func NewPredicatedContext(parser antlr.Parser, ctx antlr.ParserRuleContext) *Pre
 
 	return p
 }
-
-func (s *PredicatedContext) Get_valueExpression() IValueExpressionContext { return s._valueExpression }
-
-func (s *PredicatedContext) Set_valueExpression(v IValueExpressionContext) { s._valueExpression = v }
 
 func (s *PredicatedContext) GetRuleContext() antlr.RuleContext {
 	return s
@@ -16866,10 +16862,7 @@ func (p *SqlBaseParser) booleanExpression(_p int) (localctx IBooleanExpressionCo
 
 		{
 			p.SetState(1228)
-
-			var _x = p.valueExpression(0)
-
-			localctx.(*PredicatedContext)._valueExpression = _x
+			p.valueExpression(0)
 		}
 		p.SetState(1230)
 		p.GetErrorHandler().Sync(p)
@@ -16877,7 +16870,7 @@ func (p *SqlBaseParser) booleanExpression(_p int) (localctx IBooleanExpressionCo
 		if p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 158, p.GetParserRuleContext()) == 1 {
 			{
 				p.SetState(1229)
-				p.Predicate(localctx.(*PredicatedContext).Get_valueExpression())
+				p.Predicate()
 			}
 
 		}
@@ -16980,12 +16973,6 @@ type IPredicateContext interface {
 	// GetParser returns the parser.
 	GetParser() antlr.Parser
 
-	// GetValue returns the value attribute.
-	GetValue() ParserRuleContext
-
-	// SetValue sets the value attribute.
-	SetValue(ParserRuleContext)
-
 	// IsPredicateContext differentiates from other interfaces.
 	IsPredicateContext()
 }
@@ -16993,7 +16980,6 @@ type IPredicateContext interface {
 type PredicateContext struct {
 	*antlr.BaseParserRuleContext
 	parser antlr.Parser
-	value  ParserRuleContext
 }
 
 func NewEmptyPredicateContext() *PredicateContext {
@@ -17005,7 +16991,7 @@ func NewEmptyPredicateContext() *PredicateContext {
 
 func (*PredicateContext) IsPredicateContext() {}
 
-func NewPredicateContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int, value ParserRuleContext) *PredicateContext {
+func NewPredicateContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *PredicateContext {
 	var p = new(PredicateContext)
 
 	p.BaseParserRuleContext = antlr.NewBaseParserRuleContext(parent, invokingState)
@@ -17013,20 +16999,13 @@ func NewPredicateContext(parser antlr.Parser, parent antlr.ParserRuleContext, in
 	p.parser = parser
 	p.RuleIndex = SqlBaseParserRULE_predicate
 
-	p.value = value
-
 	return p
 }
 
 func (s *PredicateContext) GetParser() antlr.Parser { return s.parser }
 
-func (s *PredicateContext) GetValue() ParserRuleContext { return s.value }
-
-func (s *PredicateContext) SetValue(v ParserRuleContext) { s.value = v }
-
 func (s *PredicateContext) CopyFrom(ctx *PredicateContext) {
 	s.BaseParserRuleContext.CopyFrom(ctx.BaseParserRuleContext)
-	s.value = ctx.value
 }
 
 func (s *PredicateContext) GetRuleContext() antlr.RuleContext {
@@ -17594,8 +17573,8 @@ func (s *QuantifiedComparisonContext) Accept(visitor antlr.ParseTreeVisitor) int
 	}
 }
 
-func (p *SqlBaseParser) Predicate(value ParserRuleContext) (localctx IPredicateContext) {
-	localctx = NewPredicateContext(p, p.GetParserRuleContext(), p.GetState(), value)
+func (p *SqlBaseParser) Predicate() (localctx IPredicateContext) {
+	localctx = NewPredicateContext(p, p.GetParserRuleContext(), p.GetState())
 	p.EnterRule(localctx, 88, SqlBaseParserRULE_predicate)
 	var _la int
 
@@ -24363,17 +24342,17 @@ type IWindowFrameContext interface {
 	// SetFrameType sets the frameType token.
 	SetFrameType(antlr.Token)
 
-	// GetStart returns the start rule contexts.
-	GetStart() IFrameBoundContext
+	// GetStart_bound returns the start_bound rule contexts.
+	GetStart_bound() IFrameBoundContext
 
-	// GetEnd returns the end rule contexts.
-	GetEnd() IFrameBoundContext
+	// GetEnd_bound returns the end_bound rule contexts.
+	GetEnd_bound() IFrameBoundContext
 
-	// SetStart sets the start rule contexts.
-	SetStart(IFrameBoundContext)
+	// SetStart_bound sets the start_bound rule contexts.
+	SetStart_bound(IFrameBoundContext)
 
-	// SetEnd sets the end rule contexts.
-	SetEnd(IFrameBoundContext)
+	// SetEnd_bound sets the end_bound rule contexts.
+	SetEnd_bound(IFrameBoundContext)
 
 	// IsWindowFrameContext differentiates from other interfaces.
 	IsWindowFrameContext()
@@ -24381,10 +24360,10 @@ type IWindowFrameContext interface {
 
 type WindowFrameContext struct {
 	*antlr.BaseParserRuleContext
-	parser    antlr.Parser
-	frameType antlr.Token
-	start     IFrameBoundContext
-	end       IFrameBoundContext
+	parser      antlr.Parser
+	frameType   antlr.Token
+	start_bound IFrameBoundContext
+	end_bound   IFrameBoundContext
 }
 
 func NewEmptyWindowFrameContext() *WindowFrameContext {
@@ -24413,13 +24392,13 @@ func (s *WindowFrameContext) GetFrameType() antlr.Token { return s.frameType }
 
 func (s *WindowFrameContext) SetFrameType(v antlr.Token) { s.frameType = v }
 
-func (s *WindowFrameContext) GetStart() IFrameBoundContext { return s.start }
+func (s *WindowFrameContext) GetStart_bound() IFrameBoundContext { return s.start_bound }
 
-func (s *WindowFrameContext) GetEnd() IFrameBoundContext { return s.end }
+func (s *WindowFrameContext) GetEnd_bound() IFrameBoundContext { return s.end_bound }
 
-func (s *WindowFrameContext) SetStart(v IFrameBoundContext) { s.start = v }
+func (s *WindowFrameContext) SetStart_bound(v IFrameBoundContext) { s.start_bound = v }
 
-func (s *WindowFrameContext) SetEnd(v IFrameBoundContext) { s.end = v }
+func (s *WindowFrameContext) SetEnd_bound(v IFrameBoundContext) { s.end_bound = v }
 
 func (s *WindowFrameContext) RANGE() antlr.TerminalNode {
 	return s.GetToken(SqlBaseParserRANGE, 0)
@@ -24527,7 +24506,7 @@ func (p *SqlBaseParser) WindowFrame() (localctx IWindowFrameContext) {
 
 			var _x = p.FrameBound()
 
-			localctx.(*WindowFrameContext).start = _x
+			localctx.(*WindowFrameContext).start_bound = _x
 		}
 
 	case 2:
@@ -24544,7 +24523,7 @@ func (p *SqlBaseParser) WindowFrame() (localctx IWindowFrameContext) {
 
 			var _x = p.FrameBound()
 
-			localctx.(*WindowFrameContext).start = _x
+			localctx.(*WindowFrameContext).start_bound = _x
 		}
 
 	case 3:
@@ -24565,7 +24544,7 @@ func (p *SqlBaseParser) WindowFrame() (localctx IWindowFrameContext) {
 
 			var _x = p.FrameBound()
 
-			localctx.(*WindowFrameContext).start = _x
+			localctx.(*WindowFrameContext).start_bound = _x
 		}
 		{
 			p.SetState(1757)
@@ -24576,7 +24555,7 @@ func (p *SqlBaseParser) WindowFrame() (localctx IWindowFrameContext) {
 
 			var _x = p.FrameBound()
 
-			localctx.(*WindowFrameContext).end = _x
+			localctx.(*WindowFrameContext).end_bound = _x
 		}
 
 	case 4:
@@ -24597,7 +24576,7 @@ func (p *SqlBaseParser) WindowFrame() (localctx IWindowFrameContext) {
 
 			var _x = p.FrameBound()
 
-			localctx.(*WindowFrameContext).start = _x
+			localctx.(*WindowFrameContext).start_bound = _x
 		}
 		{
 			p.SetState(1763)
@@ -24608,7 +24587,7 @@ func (p *SqlBaseParser) WindowFrame() (localctx IWindowFrameContext) {
 
 			var _x = p.FrameBound()
 
-			localctx.(*WindowFrameContext).end = _x
+			localctx.(*WindowFrameContext).end_bound = _x
 		}
 
 	}
