@@ -4,13 +4,19 @@ import (
 	"fmt"
 )
 
+type ISelectStmt interface {
+	Node
+	Distinct() bool
+	SelectItems() []ISelectItem
+}
+
 type SelectStmt struct {
 	*BaseNode
 	distinct    bool
-	selectItems []*SelectItem
+	selectItems []ISelectItem
 }
 
-func NewSelectStmt(distinct bool, selectItems []*SelectItem, location ...*NodeLocation) *SelectStmt {
+func NewSelectStmt(distinct bool, selectItems []ISelectItem, location ...*NodeLocation) *SelectStmt {
 	return &SelectStmt{
 		BaseNode: &BaseNode{
 			location: GetOptionalNodeLocation(location...),
@@ -24,7 +30,7 @@ func (s *SelectStmt) Distinct() bool {
 	return s.distinct
 }
 
-func (s *SelectStmt) SelectItems() []*SelectItem {
+func (s *SelectStmt) SelectItems() []ISelectItem {
 	return s.selectItems
 }
 

@@ -4,21 +4,27 @@ import (
 	"context"
 )
 
-type Property struct {
-	*BaseNode
-	name  *Identifier
-	value *Expression
+type IProperty interface {
+	Node
+	Name() IIdentifier
+	Value() IExpression
 }
 
-func (p *Property) Name() *Identifier {
+type Property struct {
+	*BaseNode
+	name  IIdentifier
+	value IExpression
+}
+
+func (p *Property) Name() IIdentifier {
 	return p.name
 }
 
-func (p *Property) Value() *Expression {
+func (p *Property) Value() IExpression {
 	return p.value
 }
 
-func NewProperty(name *Identifier, value *Expression, location ...*NodeLocation) *Property {
+func NewProperty(name IIdentifier, value IExpression, location ...*NodeLocation) *Property {
 	return &Property{
 		// TODO fill context
 		BaseNode: NewBaseNode(context.TODO()),

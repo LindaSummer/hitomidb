@@ -1,5 +1,10 @@
 package tree
 
+type IAllColumns interface {
+	ISelectItem
+	Prefix() *QualifiedName
+}
+
 type AllColumns struct {
 	*SelectItem
 	prefix *QualifiedName

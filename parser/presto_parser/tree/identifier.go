@@ -6,6 +6,12 @@ import (
 	"github.com/pkg/errors"
 )
 
+type IIdentifier interface {
+	IExpression
+	Value() string
+	Delimited() bool
+}
+
 type Identifier struct {
 	*Expression
 	value     string

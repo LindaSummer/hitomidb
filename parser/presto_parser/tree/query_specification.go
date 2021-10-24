@@ -1,26 +1,34 @@
 package tree
 
+type IQuerySpecification interface {
+	IQueryBody
+	SelectStmt() ISelectStmt
+	From() IRelation
+	Where() IExpression
+	Limit() *string
+}
+
 type QuerySpecification struct {
 	*QueryBody
-	selectStmt *SelectStmt
-	from       *Relation
-	where      *Expression
-	groupBy    *GroupBy
-	having     *Expression
-	orderBy    *OrderBy
-	offset     *Offset
+	selectStmt ISelectStmt
+	from       IRelation
+	where      IExpression
+	groupBy    IGroupBy
+	having     IExpression
+	orderBy    IOrderBy
+	offset     IOffset
 	limit      *string
 }
 
-func (q *QuerySpecification) SelectStmt() *SelectStmt {
+func (q *QuerySpecification) SelectStmt() ISelectStmt {
 	return q.selectStmt
 }
 
-func (q *QuerySpecification) From() *Relation {
+func (q *QuerySpecification) From() IRelation {
 	return q.from
 }
 
-func (q *QuerySpecification) Where() *Expression {
+func (q *QuerySpecification) Where() IExpression {
 	return q.where
 }
 
@@ -29,12 +37,12 @@ func (q *QuerySpecification) Limit() *string {
 }
 
 func NewQuerySpecification(
-	selectStmt *SelectStmt,
-	from *Relation,
-	where *Expression,
-	groupBy *GroupBy,
-	having *Expression,
-	orderBy *OrderBy,
+	selectStmt ISelectStmt,
+	from IRelation,
+	where IExpression,
+	groupBy IGroupBy,
+	having IExpression,
+	orderBy IOrderBy,
 	limit *string,
 	location ...*NodeLocation,
 ) *QuerySpecification {
@@ -43,6 +51,9 @@ func NewQuerySpecification(
 		selectStmt: selectStmt,
 		from:       from,
 		where:      where,
+		groupBy:    groupBy,
+		having:     having,
+		orderBy:    orderBy,
 		limit:      limit,
 	}
 }

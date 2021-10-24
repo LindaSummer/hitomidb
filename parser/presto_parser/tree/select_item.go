@@ -4,6 +4,10 @@ import (
 	"context"
 )
 
+type ISelectItem interface {
+	Node
+}
+
 type SelectItem struct {
 	*BaseNode
 }

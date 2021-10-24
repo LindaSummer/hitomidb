@@ -1,15 +1,21 @@
 package tree
 
+type IQuery interface {
+	IStatement
+	QueryBody() IQueryBody
+	Limit() *string
+}
+
 type Query struct {
 	*Statement
 	// TODO add with
-	queryBody *QueryBody
+	queryBody IQueryBody
 	// TODO add order by
 	limit *string
 	// TODO add offset
 }
 
-func (q *Query) QueryBody() *QueryBody {
+func (q *Query) QueryBody() IQueryBody {
 	return q.queryBody
 }
 
@@ -18,7 +24,7 @@ func (q *Query) Limit() *string {
 }
 
 // NewQuery TODO fulfill constructor
-func NewQuery(queryBody *QueryBody, limit *string, location ...*NodeLocation) *Query {
+func NewQuery(queryBody IQueryBody, limit *string, location ...*NodeLocation) *Query {
 	return &Query{Statement: NewStatement(location...), queryBody: queryBody, limit: limit}
 }
 

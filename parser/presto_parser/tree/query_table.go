@@ -1,5 +1,10 @@
 package tree
 
+type IQueryTable interface {
+	IQueryBody
+	Name() QualifiedName
+}
+
 type QueryTable struct {
 	*QueryBody
 	name QualifiedName

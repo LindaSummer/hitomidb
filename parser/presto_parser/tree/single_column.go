@@ -1,20 +1,26 @@
 package tree
 
-type SingleColumn struct {
-	*SelectItem
-	alias      *Identifier
-	expression *Expression
+type ISingleColumn interface {
+	ISelectItem
+	Alias() IIdentifier
+	Expression() IExpression
 }
 
-func (s *SingleColumn) Alias() *Identifier {
+type SingleColumn struct {
+	*SelectItem
+	alias      IIdentifier
+	expression IExpression
+}
+
+func (s *SingleColumn) Alias() IIdentifier {
 	return s.alias
 }
 
-func (s *SingleColumn) Expression() *Expression {
+func (s *SingleColumn) Expression() IExpression {
 	return s.expression
 }
 
-func NewSingleColumn(alias *Identifier, expression *Expression, location ...*NodeLocation) *SingleColumn {
+func NewSingleColumn(alias IIdentifier, expression IExpression, location ...*NodeLocation) *SingleColumn {
 	return &SingleColumn{
 		SelectItem: NewSelectItem(location...),
 		alias:      alias,

@@ -4,6 +4,10 @@ import (
 	"context"
 )
 
+type IStatement interface {
+	Node
+}
+
 type Statement struct {
 	*BaseNode
 }

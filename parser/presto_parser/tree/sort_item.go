@@ -18,14 +18,21 @@ const (
 	UNDEFINED
 )
 
+type ISortItem interface {
+	Node
+	SortKey() IExpression
+	Ordering() OrderingType
+	NullOrdering() NullOrderingType
+}
+
 type SortItem struct {
 	*BaseNode
-	sortKey      *Expression
+	sortKey      IExpression
 	ordering     OrderingType
 	nullOrdering NullOrderingType
 }
 
-func (s *SortItem) SortKey() *Expression {
+func (s *SortItem) SortKey() IExpression {
 	return s.sortKey
 }
 
@@ -37,7 +44,7 @@ func (s *SortItem) NullOrdering() NullOrderingType {
 	return s.nullOrdering
 }
 
-func NewSortItem(sortKey *Expression, ordering OrderingType, nullOrdering NullOrderingType, location ...*NodeLocation) *SortItem {
+func NewSortItem(sortKey IExpression, ordering OrderingType, nullOrdering NullOrderingType, location ...*NodeLocation) *SortItem {
 	return &SortItem{
 		BaseNode:     NewBaseNode(context.TODO(), location...),
 		sortKey:      sortKey,

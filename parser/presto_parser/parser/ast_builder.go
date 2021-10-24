@@ -1,8 +1,7 @@
 package parser
 
 import (
-	stmt "hitomidb/parser/presto_parser/tree"
-	"reflect"
+	"hitomidb/parser/presto_parser/tree"
 
 	funk "github.com/thoas/go-funk"
 
@@ -24,30 +23,7 @@ func NewAstBuilder(parserOptions ParserOptions) *AstBuilder {
 }
 
 func (a *AstBuilder) Visit(tree antlr.ParseTree) interface{} {
-	switch ctx := tree.(type) {
-	case *SingleStatementContext:
-		return a.VisitSingleStatement(ctx)
-	case *StandaloneExpressionContext:
-		return a.VisitStandaloneExpression(ctx)
-	case *StandaloneRoutineBodyContext:
-		return a.VisitStandaloneRoutineBody(ctx)
-	case *StatementDefaultContext:
-		return a.VisitStatementDefault(ctx)
-	case *QueryContext:
-		return a.VisitQuery(ctx)
-	case *QueryNoWithContext:
-		return a.VisitQueryNoWith(ctx)
-	case *QueryTermDefaultContext:
-		return a.VisitQueryTermDefault(ctx)
-	case *QueryPrimaryDefaultContext:
-		return a.VisitQueryPrimaryDefault(ctx)
-	case *QuerySpecificationContext:
-		return a.VisitQuerySpecification(ctx)
-	case *SelectAllContext:
-		return a.VisitSelectAll(ctx)
-	default:
-		panic(errors.WithStack(errors.Errorf("not implemented type: %v", reflect.TypeOf(ctx))))
-	}
+	return tree.Accept(a)
 }
 
 //func (a *AstBuilder) VisitChildren(node antlr.RuleNode) interface{} {
@@ -307,14 +283,14 @@ func (a *AstBuilder) VisitDescribeOutput(ctx *DescribeOutputContext) interface{}
 }
 
 func (a *AstBuilder) VisitQuery(ctx *QueryContext) interface{} {
-	body := a.Visit(ctx.QueryNoWith()).(*stmt.Query)
+	body := a.Visit(ctx.QueryNoWith()).(tree.IQuery)
 
 	// TODO fulfill with
 	//if ctx.With() != nil {
 	//	a.Visit(ctx.With())
 	//}
 
-	return stmt.NewQuery(body.QueryBody(), body.Limit())
+	return tree.NewQuery(body.QueryBody(), body.Limit())
 }
 
 func (a *AstBuilder) VisitWith(ctx *WithContext) interface{} {
@@ -390,13 +366,13 @@ func (a *AstBuilder) VisitExternalRoutineName(ctx *ExternalRoutineNameContext) i
 }
 
 func (a *AstBuilder) VisitQueryNoWith(ctx *QueryNoWithContext) interface{} {
-	queryTerm := a.Visit(ctx.QueryTerm()).(*stmt.QueryBody)
+	queryTerm := a.Visit(ctx.QueryTerm()).(tree.IQueryBody)
 	if queryTerm == nil {
 		panic(errors.WithStack(errors.New("queryTerm is nil")))
 	}
 	limit := ctx.limit.GetText()
 	// TODO implement rest
-	return stmt.NewQuery(queryTerm, &limit)
+	return tree.NewQuery(queryTerm, &limit)
 }
 
 func (a *AstBuilder) VisitQueryTermDefault(ctx *QueryTermDefaultContext) interface{} {
@@ -428,26 +404,30 @@ func (a *AstBuilder) VisitSortItem(ctx *SortItemContext) interface{} {
 }
 
 func (a *AstBuilder) VisitQuerySpecification(ctx *QuerySpecificationContext) interface{} {
-	var from *stmt.Relation
-	selectItems := a.visitList(ctx.AllSelectItem()).([]*stmt.SelectItem)
+	var from tree.IRelation
+	selectItems := funk.Map(ctx.AllSelectItem(), func(s ISelectItemContext) tree.ISelectItem {
+		return a.Visit(s).(tree.ISelectItem)
+	}).([]tree.ISelectItem)
 
-	relations := a.visitList(ctx.AllRelation()).([]*stmt.Relation)
+	relations := funk.Map(ctx.AllRelation(), func(r IRelationContext) tree.IRelation {
+		return a.Visit(r).(tree.IRelation)
+	}).([]tree.IRelation)
 	if len(relations) > 0 {
 		// TODO finish JOIN
 		from = relations[0]
 	}
 
-	return stmt.NewQuerySpecification(
-		stmt.NewSelectStmt(
-			a.isDistinct(ctx.SetQuantifier().(*SetQuantifierContext)),
+	return tree.NewQuerySpecification(
+		tree.NewSelectStmt(
+			a.isDistinct(ctx.SetQuantifier()),
 			selectItems,
 			a.getParserRuleContextLocation(ctx),
 			a.getTerminalNodeLocation(ctx.SELECT()),
 		),
 		from,
-		a.visitIfExist(ctx.where).(*stmt.Expression),
-		a.visitIfExist(ctx.GroupBy()).(*stmt.GroupBy),
-		a.visitIfExist(ctx.having).(*stmt.Expression),
+		a.visitIfExist(ctx.where).(tree.IExpression),
+		a.visitIfExist(ctx.GroupBy()).(tree.IGroupBy),
+		a.visitIfExist(ctx.having).(tree.IExpression),
 		nil,
 		nil,
 	)
@@ -486,19 +466,24 @@ func (a *AstBuilder) VisitSetQuantifier(ctx *SetQuantifierContext) interface{} {
 }
 
 func (a *AstBuilder) VisitSelectSingle(ctx *SelectSingleContext) interface{} {
-	panic("implement me")
+	var identifier tree.IIdentifier
+	if ctx.Identifier() != nil {
+		identifier = a.Visit(ctx.Identifier()).(tree.IIdentifier)
+	}
+	expression := a.Visit(ctx.Expression()).(tree.IExpression)
+	return tree.NewSingleColumn(identifier, expression, a.getParserRuleContextLocation(ctx))
 }
 
 func (a *AstBuilder) VisitSelectAll(ctx *SelectAllContext) interface{} {
-	if ctx := ctx.QualifiedName().(*QualifiedNameContext); ctx != nil {
-		return stmt.NewAllColumns(a.VisitQualifiedName(ctx).(*stmt.QualifiedName), a.getParserRuleContextLocation(ctx))
+	if ctx, ok := ctx.QualifiedName().(*QualifiedNameContext); ok && ctx != nil {
+		return tree.NewAllColumns(a.VisitQualifiedName(ctx).(*tree.QualifiedName), a.getParserRuleContextLocation(ctx))
 	}
 
-	return stmt.NewAllColumns(nil, a.getParserRuleContextLocation(ctx))
+	return tree.NewAllColumns(nil, a.getParserRuleContextLocation(ctx))
 }
 
 func (a *AstBuilder) VisitRelationDefault(ctx *RelationDefaultContext) interface{} {
-	panic("implement me")
+	return a.Visit(ctx.SampledRelation())
 }
 
 func (a *AstBuilder) VisitJoinRelation(ctx *JoinRelationContext) interface{} {
@@ -514,7 +499,17 @@ func (a *AstBuilder) VisitJoinCriteria(ctx *JoinCriteriaContext) interface{} {
 }
 
 func (a *AstBuilder) VisitSampledRelation(ctx *SampledRelationContext) interface{} {
-	panic("implement me")
+	relation := a.Visit(ctx.AliasedRelation()).(tree.IRelation)
+	if ctx.TABLESAMPLE() == nil {
+		return relation
+	}
+
+	return tree.NewSampledRelation(
+		relation,
+		a.Visit(ctx.SampleType()).(tree.SampledRelationType),
+		a.Visit(ctx.GetPercentage()).(tree.IExpression),
+		a.getParserRuleContextLocation(ctx),
+	)
 }
 
 func (a *AstBuilder) VisitSampleType(ctx *SampleTypeContext) interface{} {
@@ -522,15 +517,27 @@ func (a *AstBuilder) VisitSampleType(ctx *SampleTypeContext) interface{} {
 }
 
 func (a *AstBuilder) VisitAliasedRelation(ctx *AliasedRelationContext) interface{} {
-	panic("implement me")
+	relation := a.Visit(ctx.RelationPrimary()).(tree.IRelation)
+
+	if ctx.Identifier() == nil {
+		return relation
+	}
+
+	return tree.NewAliasRelation(
+		relation,
+		a.Visit(ctx.Identifier()).(tree.IIdentifier),
+		a.Visit(ctx.ColumnAliases()).([]tree.IIdentifier),
+	)
 }
 
 func (a *AstBuilder) VisitColumnAliases(ctx *ColumnAliasesContext) interface{} {
-	panic("implement me")
+	return funk.Map(ctx.AllIdentifier(), func(i IIdentifierContext) tree.IIdentifier {
+		return a.Visit(i).(tree.IIdentifier)
+	}).([]tree.IIdentifier)
 }
 
 func (a *AstBuilder) VisitTableName(ctx *TableNameContext) interface{} {
-	panic("implement me")
+	return tree.NewTable(a.Visit(ctx.QualifiedName()).(*tree.QualifiedName))
 }
 
 func (a *AstBuilder) VisitSubqueryRelation(ctx *SubqueryRelationContext) interface{} {
@@ -550,7 +557,7 @@ func (a *AstBuilder) VisitParenthesizedRelation(ctx *ParenthesizedRelationContex
 }
 
 func (a *AstBuilder) VisitExpression(ctx *ExpressionContext) interface{} {
-	panic("implement me")
+	return a.Visit(ctx.BooleanExpression())
 }
 
 func (a *AstBuilder) VisitLogicalNot(ctx *LogicalNotContext) interface{} {
@@ -558,7 +565,10 @@ func (a *AstBuilder) VisitLogicalNot(ctx *LogicalNotContext) interface{} {
 }
 
 func (a *AstBuilder) VisitPredicated(ctx *PredicatedContext) interface{} {
-	panic("implement me")
+	if ctx.Predicate() != nil {
+		return a.Visit(ctx.Predicate())
+	}
+	return a.Visit(ctx.ValueExpression())
 }
 
 func (a *AstBuilder) VisitLogicalBinary(ctx *LogicalBinaryContext) interface{} {
@@ -598,7 +608,7 @@ func (a *AstBuilder) VisitDistinctFrom(ctx *DistinctFromContext) interface{} {
 }
 
 func (a *AstBuilder) VisitValueExpressionDefault(ctx *ValueExpressionDefaultContext) interface{} {
-	panic("implement me")
+	return a.Visit(ctx.PrimaryExpression())
 }
 
 func (a *AstBuilder) VisitConcatenation(ctx *ConcatenationContext) interface{} {
@@ -618,7 +628,11 @@ func (a *AstBuilder) VisitAtTimeZone(ctx *AtTimeZoneContext) interface{} {
 }
 
 func (a *AstBuilder) VisitDereference(ctx *DereferenceContext) interface{} {
-	panic("implement me")
+	return tree.NewDereferenceExpression(
+		a.Visit(ctx.GetBase()).(tree.IExpression),
+		a.Visit(ctx.GetFieldName()).(tree.IIdentifier),
+		a.getParserRuleContextLocation(ctx),
+	)
 }
 
 func (a *AstBuilder) VisitTypeConstructor(ctx *TypeConstructorContext) interface{} {
@@ -670,7 +684,7 @@ func (a *AstBuilder) VisitSimpleCase(ctx *SimpleCaseContext) interface{} {
 }
 
 func (a *AstBuilder) VisitColumnReference(ctx *ColumnReferenceContext) interface{} {
-	panic("implement me")
+	return a.Visit(ctx.Identifier())
 }
 
 func (a *AstBuilder) VisitNullLiteral(ctx *NullLiteralContext) interface{} {
@@ -865,7 +879,7 @@ func (a *AstBuilder) VisitQualifiedName(ctx *QualifiedNameContext) interface{} {
 	origin := funk.Chain(ctx.AllIdentifier()).Map(func(ctx IIdentifierContext) string {
 		return ctx.GetText()
 	}).Value().([]string)
-	return stmt.NewQualifiedNameWithOrigin(origin[0], origin[1:]...)
+	return tree.NewQualifiedNameWithOrigin(origin[0], origin[1:]...)
 }
 
 func (a *AstBuilder) VisitCurrentUserGrantor(ctx *CurrentUserGrantorContext) interface{} {
@@ -897,7 +911,7 @@ func (a *AstBuilder) VisitRoles(ctx *RolesContext) interface{} {
 }
 
 func (a *AstBuilder) VisitUnquotedIdentifier(ctx *UnquotedIdentifierContext) interface{} {
-	panic("implement me")
+	return tree.NewIdentifier(ctx.IDENTIFIER().GetText(), a.getParserRuleContextLocation(ctx))
 }
 
 func (a *AstBuilder) VisitQuotedIdentifier(ctx *QuotedIdentifierContext) interface{} {
@@ -941,11 +955,14 @@ func (a *AstBuilder) visitIfExist(tree antlr.ParseTree) interface{} {
 	return nil
 }
 
-func (a *AstBuilder) isDistinct(ctx *SetQuantifierContext) bool {
-	return ctx != nil && ctx.DISTINCT() != nil
+func (a *AstBuilder) isDistinct(ctx ISetQuantifierContext) bool {
+	if ctx, ok := ctx.(*SetQuantifierContext); ok && ctx != nil && ctx.DISTINCT() != nil {
+		return true
+	}
+	return false
 }
 
-func (a *AstBuilder) getTerminalNodeLocation(node antlr.TerminalNode) *stmt.NodeLocation {
+func (a *AstBuilder) getTerminalNodeLocation(node antlr.TerminalNode) *tree.NodeLocation {
 	if node == nil {
 		return nil
 	}
@@ -953,17 +970,17 @@ func (a *AstBuilder) getTerminalNodeLocation(node antlr.TerminalNode) *stmt.Node
 	return a.getTokenLocation(node.GetSymbol())
 }
 
-func (a *AstBuilder) getParserRuleContextLocation(ctx antlr.ParserRuleContext) *stmt.NodeLocation {
+func (a *AstBuilder) getParserRuleContextLocation(ctx antlr.ParserRuleContext) *tree.NodeLocation {
 	if ctx == nil {
 		return nil
 	}
 	return a.getTokenLocation(ctx.GetStart())
 }
 
-func (a *AstBuilder) getTokenLocation(token antlr.Token) *stmt.NodeLocation {
+func (a *AstBuilder) getTokenLocation(token antlr.Token) *tree.NodeLocation {
 	if token != nil {
 		return nil
 	}
 
-	return stmt.NewNodeLocation(token.GetLine(), token.GetColumn())
+	return tree.NewNodeLocation(token.GetLine(), token.GetColumn())
 }

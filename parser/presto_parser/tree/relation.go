@@ -4,6 +4,10 @@ import (
 	"context"
 )
 
+type IRelation interface {
+	Node
+}
+
 type Relation struct {
 	*BaseNode
 }

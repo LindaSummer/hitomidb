@@ -2,6 +2,11 @@ package tree
 
 import "context"
 
+type IOffset interface {
+	Node
+	RwoCount() string
+}
+
 type Offset struct {
 	*BaseNode
 	rwoCount string

@@ -4,6 +4,10 @@ import (
 	"context"
 )
 
+type ITableElement interface {
+	Node
+}
+
 type TableElement struct {
 	*BaseNode
 }

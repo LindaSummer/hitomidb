@@ -4,6 +4,10 @@ import (
 	"context"
 )
 
+type IExpression interface {
+	Node
+}
+
 type Expression struct {
 	*BaseNode
 }

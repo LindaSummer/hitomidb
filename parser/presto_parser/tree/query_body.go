@@ -1,5 +1,9 @@
 package tree
 
+type IQueryBody interface {
+	IRelation
+}
+
 type QueryBody struct {
 	*Relation
 }
