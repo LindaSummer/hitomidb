@@ -698,11 +698,17 @@ func (s *BaseSqlBaseListener) EnterParenthesizedRelation(ctx *ParenthesizedRelat
 // ExitParenthesizedRelation is called when production parenthesizedRelation is exited.
 func (s *BaseSqlBaseListener) ExitParenthesizedRelation(ctx *ParenthesizedRelationContext) {}
 
-// EnterExpression is called when production expression is entered.
-func (s *BaseSqlBaseListener) EnterExpression(ctx *ExpressionContext) {}
+// EnterValueExp is called when production valueExp is entered.
+func (s *BaseSqlBaseListener) EnterValueExp(ctx *ValueExpContext) {}
 
-// ExitExpression is called when production expression is exited.
-func (s *BaseSqlBaseListener) ExitExpression(ctx *ExpressionContext) {}
+// ExitValueExp is called when production valueExp is exited.
+func (s *BaseSqlBaseListener) ExitValueExp(ctx *ValueExpContext) {}
+
+// EnterBooleanExp is called when production booleanExp is entered.
+func (s *BaseSqlBaseListener) EnterBooleanExp(ctx *BooleanExpContext) {}
+
+// ExitBooleanExp is called when production booleanExp is exited.
+func (s *BaseSqlBaseListener) ExitBooleanExp(ctx *BooleanExpContext) {}
 
 // EnterLogicalNot is called when production logicalNot is entered.
 func (s *BaseSqlBaseListener) EnterLogicalNot(ctx *LogicalNotContext) {}
@@ -710,47 +716,11 @@ func (s *BaseSqlBaseListener) EnterLogicalNot(ctx *LogicalNotContext) {}
 // ExitLogicalNot is called when production logicalNot is exited.
 func (s *BaseSqlBaseListener) ExitLogicalNot(ctx *LogicalNotContext) {}
 
-// EnterPredicated is called when production predicated is entered.
-func (s *BaseSqlBaseListener) EnterPredicated(ctx *PredicatedContext) {}
-
-// ExitPredicated is called when production predicated is exited.
-func (s *BaseSqlBaseListener) ExitPredicated(ctx *PredicatedContext) {}
-
-// EnterLogicalBinary is called when production logicalBinary is entered.
-func (s *BaseSqlBaseListener) EnterLogicalBinary(ctx *LogicalBinaryContext) {}
-
-// ExitLogicalBinary is called when production logicalBinary is exited.
-func (s *BaseSqlBaseListener) ExitLogicalBinary(ctx *LogicalBinaryContext) {}
-
 // EnterComparison is called when production comparison is entered.
 func (s *BaseSqlBaseListener) EnterComparison(ctx *ComparisonContext) {}
 
 // ExitComparison is called when production comparison is exited.
 func (s *BaseSqlBaseListener) ExitComparison(ctx *ComparisonContext) {}
-
-// EnterQuantifiedComparison is called when production quantifiedComparison is entered.
-func (s *BaseSqlBaseListener) EnterQuantifiedComparison(ctx *QuantifiedComparisonContext) {}
-
-// ExitQuantifiedComparison is called when production quantifiedComparison is exited.
-func (s *BaseSqlBaseListener) ExitQuantifiedComparison(ctx *QuantifiedComparisonContext) {}
-
-// EnterBetween is called when production between is entered.
-func (s *BaseSqlBaseListener) EnterBetween(ctx *BetweenContext) {}
-
-// ExitBetween is called when production between is exited.
-func (s *BaseSqlBaseListener) ExitBetween(ctx *BetweenContext) {}
-
-// EnterInList is called when production inList is entered.
-func (s *BaseSqlBaseListener) EnterInList(ctx *InListContext) {}
-
-// ExitInList is called when production inList is exited.
-func (s *BaseSqlBaseListener) ExitInList(ctx *InListContext) {}
-
-// EnterInSubquery is called when production inSubquery is entered.
-func (s *BaseSqlBaseListener) EnterInSubquery(ctx *InSubqueryContext) {}
-
-// ExitInSubquery is called when production inSubquery is exited.
-func (s *BaseSqlBaseListener) ExitInSubquery(ctx *InSubqueryContext) {}
 
 // EnterLike is called when production like is entered.
 func (s *BaseSqlBaseListener) EnterLike(ctx *LikeContext) {}
@@ -758,17 +728,47 @@ func (s *BaseSqlBaseListener) EnterLike(ctx *LikeContext) {}
 // ExitLike is called when production like is exited.
 func (s *BaseSqlBaseListener) ExitLike(ctx *LikeContext) {}
 
-// EnterNullPredicate is called when production nullPredicate is entered.
-func (s *BaseSqlBaseListener) EnterNullPredicate(ctx *NullPredicateContext) {}
+// EnterInSubquery is called when production inSubquery is entered.
+func (s *BaseSqlBaseListener) EnterInSubquery(ctx *InSubqueryContext) {}
 
-// ExitNullPredicate is called when production nullPredicate is exited.
-func (s *BaseSqlBaseListener) ExitNullPredicate(ctx *NullPredicateContext) {}
+// ExitInSubquery is called when production inSubquery is exited.
+func (s *BaseSqlBaseListener) ExitInSubquery(ctx *InSubqueryContext) {}
 
 // EnterDistinctFrom is called when production distinctFrom is entered.
 func (s *BaseSqlBaseListener) EnterDistinctFrom(ctx *DistinctFromContext) {}
 
 // ExitDistinctFrom is called when production distinctFrom is exited.
 func (s *BaseSqlBaseListener) ExitDistinctFrom(ctx *DistinctFromContext) {}
+
+// EnterInList is called when production inList is entered.
+func (s *BaseSqlBaseListener) EnterInList(ctx *InListContext) {}
+
+// ExitInList is called when production inList is exited.
+func (s *BaseSqlBaseListener) ExitInList(ctx *InListContext) {}
+
+// EnterNullPredicate is called when production nullPredicate is entered.
+func (s *BaseSqlBaseListener) EnterNullPredicate(ctx *NullPredicateContext) {}
+
+// ExitNullPredicate is called when production nullPredicate is exited.
+func (s *BaseSqlBaseListener) ExitNullPredicate(ctx *NullPredicateContext) {}
+
+// EnterBetween is called when production between is entered.
+func (s *BaseSqlBaseListener) EnterBetween(ctx *BetweenContext) {}
+
+// ExitBetween is called when production between is exited.
+func (s *BaseSqlBaseListener) ExitBetween(ctx *BetweenContext) {}
+
+// EnterQuantifiedComparison is called when production quantifiedComparison is entered.
+func (s *BaseSqlBaseListener) EnterQuantifiedComparison(ctx *QuantifiedComparisonContext) {}
+
+// ExitQuantifiedComparison is called when production quantifiedComparison is exited.
+func (s *BaseSqlBaseListener) ExitQuantifiedComparison(ctx *QuantifiedComparisonContext) {}
+
+// EnterLogicalBinary is called when production logicalBinary is entered.
+func (s *BaseSqlBaseListener) EnterLogicalBinary(ctx *LogicalBinaryContext) {}
+
+// ExitLogicalBinary is called when production logicalBinary is exited.
+func (s *BaseSqlBaseListener) ExitLogicalBinary(ctx *LogicalBinaryContext) {}
 
 // EnterValueExpressionDefault is called when production valueExpressionDefault is entered.
 func (s *BaseSqlBaseListener) EnterValueExpressionDefault(ctx *ValueExpressionDefaultContext) {}

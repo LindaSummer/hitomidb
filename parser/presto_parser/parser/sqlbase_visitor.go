@@ -343,41 +343,41 @@ type SqlBaseVisitor interface {
 	// Visit a parse tree produced by SqlBaseParser#parenthesizedRelation.
 	VisitParenthesizedRelation(ctx *ParenthesizedRelationContext) interface{}
 
-	// Visit a parse tree produced by SqlBaseParser#expression.
-	VisitExpression(ctx *ExpressionContext) interface{}
+	// Visit a parse tree produced by SqlBaseParser#valueExp.
+	VisitValueExp(ctx *ValueExpContext) interface{}
+
+	// Visit a parse tree produced by SqlBaseParser#booleanExp.
+	VisitBooleanExp(ctx *BooleanExpContext) interface{}
 
 	// Visit a parse tree produced by SqlBaseParser#logicalNot.
 	VisitLogicalNot(ctx *LogicalNotContext) interface{}
 
-	// Visit a parse tree produced by SqlBaseParser#predicated.
-	VisitPredicated(ctx *PredicatedContext) interface{}
-
-	// Visit a parse tree produced by SqlBaseParser#logicalBinary.
-	VisitLogicalBinary(ctx *LogicalBinaryContext) interface{}
-
 	// Visit a parse tree produced by SqlBaseParser#comparison.
 	VisitComparison(ctx *ComparisonContext) interface{}
-
-	// Visit a parse tree produced by SqlBaseParser#quantifiedComparison.
-	VisitQuantifiedComparison(ctx *QuantifiedComparisonContext) interface{}
-
-	// Visit a parse tree produced by SqlBaseParser#between.
-	VisitBetween(ctx *BetweenContext) interface{}
-
-	// Visit a parse tree produced by SqlBaseParser#inList.
-	VisitInList(ctx *InListContext) interface{}
-
-	// Visit a parse tree produced by SqlBaseParser#inSubquery.
-	VisitInSubquery(ctx *InSubqueryContext) interface{}
 
 	// Visit a parse tree produced by SqlBaseParser#like.
 	VisitLike(ctx *LikeContext) interface{}
 
-	// Visit a parse tree produced by SqlBaseParser#nullPredicate.
-	VisitNullPredicate(ctx *NullPredicateContext) interface{}
+	// Visit a parse tree produced by SqlBaseParser#inSubquery.
+	VisitInSubquery(ctx *InSubqueryContext) interface{}
 
 	// Visit a parse tree produced by SqlBaseParser#distinctFrom.
 	VisitDistinctFrom(ctx *DistinctFromContext) interface{}
+
+	// Visit a parse tree produced by SqlBaseParser#inList.
+	VisitInList(ctx *InListContext) interface{}
+
+	// Visit a parse tree produced by SqlBaseParser#nullPredicate.
+	VisitNullPredicate(ctx *NullPredicateContext) interface{}
+
+	// Visit a parse tree produced by SqlBaseParser#between.
+	VisitBetween(ctx *BetweenContext) interface{}
+
+	// Visit a parse tree produced by SqlBaseParser#quantifiedComparison.
+	VisitQuantifiedComparison(ctx *QuantifiedComparisonContext) interface{}
+
+	// Visit a parse tree produced by SqlBaseParser#logicalBinary.
+	VisitLogicalBinary(ctx *LogicalBinaryContext) interface{}
 
 	// Visit a parse tree produced by SqlBaseParser#valueExpressionDefault.
 	VisitValueExpressionDefault(ctx *ValueExpressionDefaultContext) interface{}

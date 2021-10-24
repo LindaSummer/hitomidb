@@ -329,26 +329,24 @@ relationPrimary
     ;
 
 expression
-    : booleanExpression
+    : valueExpression     #valueExp
+    | booleanExpression   #booleanExp
     ;
 
+// remove workaround in Java version
+// https://github.com/antlr/antlr4/issues/780
 booleanExpression
-    : valueExpression predicate?             #predicated
+    : left=valueExpression comparisonOperator right=valueExpression                            #comparison
+    | left=valueExpression comparisonOperator comparisonQuantifier '(' query ')'               #quantifiedComparison
+    | left=valueExpression NOT? BETWEEN lower=valueExpression AND upper=valueExpression        #between
+    | left=valueExpression NOT? IN '(' expression (',' expression)* ')'                        #inList
+    | left=valueExpression NOT? IN '(' query ')'                                               #inSubquery
+    | left=valueExpression NOT? LIKE pattern=valueExpression (ESCAPE escape=valueExpression)?  #like
+    | left=valueExpression IS NOT? NULL                                                        #nullPredicate
+    | left=valueExpression IS NOT? DISTINCT FROM right=valueExpression                         #distinctFrom
     | NOT booleanExpression                                        #logicalNot
     | left=booleanExpression operator=AND right=booleanExpression  #logicalBinary
     | left=booleanExpression operator=OR right=booleanExpression   #logicalBinary
-    ;
-
-// workaround for https://github.com/antlr/antlr4/issues/780
-predicate
-    : comparisonOperator right=valueExpression                            #comparison
-    | comparisonOperator comparisonQuantifier '(' query ')'               #quantifiedComparison
-    | NOT? BETWEEN lower=valueExpression AND upper=valueExpression        #between
-    | NOT? IN '(' expression (',' expression)* ')'                        #inList
-    | NOT? IN '(' query ')'                                               #inSubquery
-    | NOT? LIKE pattern=valueExpression (ESCAPE escape=valueExpression)?  #like
-    | IS NOT? NULL                                                        #nullPredicate
-    | IS NOT? DISTINCT FROM right=valueExpression                         #distinctFrom
     ;
 
 valueExpression

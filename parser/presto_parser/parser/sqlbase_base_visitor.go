@@ -455,7 +455,11 @@ func (v *BaseSqlBaseVisitor) VisitParenthesizedRelation(ctx *ParenthesizedRelati
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseSqlBaseVisitor) VisitExpression(ctx *ExpressionContext) interface{} {
+func (v *BaseSqlBaseVisitor) VisitValueExp(ctx *ValueExpContext) interface{} {
+	return v.VisitChildren(ctx)
+}
+
+func (v *BaseSqlBaseVisitor) VisitBooleanExp(ctx *BooleanExpContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
@@ -463,31 +467,7 @@ func (v *BaseSqlBaseVisitor) VisitLogicalNot(ctx *LogicalNotContext) interface{}
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseSqlBaseVisitor) VisitPredicated(ctx *PredicatedContext) interface{} {
-	return v.VisitChildren(ctx)
-}
-
-func (v *BaseSqlBaseVisitor) VisitLogicalBinary(ctx *LogicalBinaryContext) interface{} {
-	return v.VisitChildren(ctx)
-}
-
 func (v *BaseSqlBaseVisitor) VisitComparison(ctx *ComparisonContext) interface{} {
-	return v.VisitChildren(ctx)
-}
-
-func (v *BaseSqlBaseVisitor) VisitQuantifiedComparison(ctx *QuantifiedComparisonContext) interface{} {
-	return v.VisitChildren(ctx)
-}
-
-func (v *BaseSqlBaseVisitor) VisitBetween(ctx *BetweenContext) interface{} {
-	return v.VisitChildren(ctx)
-}
-
-func (v *BaseSqlBaseVisitor) VisitInList(ctx *InListContext) interface{} {
-	return v.VisitChildren(ctx)
-}
-
-func (v *BaseSqlBaseVisitor) VisitInSubquery(ctx *InSubqueryContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
@@ -495,11 +475,31 @@ func (v *BaseSqlBaseVisitor) VisitLike(ctx *LikeContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseSqlBaseVisitor) VisitNullPredicate(ctx *NullPredicateContext) interface{} {
+func (v *BaseSqlBaseVisitor) VisitInSubquery(ctx *InSubqueryContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
 func (v *BaseSqlBaseVisitor) VisitDistinctFrom(ctx *DistinctFromContext) interface{} {
+	return v.VisitChildren(ctx)
+}
+
+func (v *BaseSqlBaseVisitor) VisitInList(ctx *InListContext) interface{} {
+	return v.VisitChildren(ctx)
+}
+
+func (v *BaseSqlBaseVisitor) VisitNullPredicate(ctx *NullPredicateContext) interface{} {
+	return v.VisitChildren(ctx)
+}
+
+func (v *BaseSqlBaseVisitor) VisitBetween(ctx *BetweenContext) interface{} {
+	return v.VisitChildren(ctx)
+}
+
+func (v *BaseSqlBaseVisitor) VisitQuantifiedComparison(ctx *QuantifiedComparisonContext) interface{} {
+	return v.VisitChildren(ctx)
+}
+
+func (v *BaseSqlBaseVisitor) VisitLogicalBinary(ctx *LogicalBinaryContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 

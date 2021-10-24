@@ -24,7 +24,7 @@ func TestSqlParser_invokeParser(t *testing.T) {
 			name: "simple-test",
 			args: args{
 				name: "statement",
-				sql:  "select t1.*, t2.a, c from t3 where d > c",
+				sql:  "select b, t1.*, t2.a, c from t3 where d > c",
 				parseFunction: func(parser *SqlBaseParser) antlr.ParserRuleContext {
 					return parser.SingleStatement()
 				},

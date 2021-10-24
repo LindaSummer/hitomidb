@@ -15,6 +15,14 @@ type AstBuilder struct {
 	parserOptions ParserOptions
 }
 
+func (a *AstBuilder) VisitValueExp(ctx *ValueExpContext) interface{} {
+	return a.Visit(ctx.ValueExpression())
+}
+
+func (a *AstBuilder) VisitBooleanExp(ctx *BooleanExpContext) interface{} {
+	return a.Visit(ctx.BooleanExpression())
+}
+
 func NewAstBuilder(parserOptions ParserOptions) *AstBuilder {
 	return &AstBuilder{
 		BaseSqlBaseVisitor: &BaseSqlBaseVisitor{},
@@ -27,15 +35,19 @@ func (a *AstBuilder) Visit(tree antlr.ParseTree) interface{} {
 }
 
 //func (a *AstBuilder) VisitChildren(node antlr.RuleNode) interface{} {
-//	panic("implement me")
+//	res := make([]interface{}, node.GetChildCount())
+//	for i := 0; i < node.GetChildCount(); i++ {
+//		res[i] = a.Visit(node.GetChild(i).(antlr.ParseTree))
+//	}
+//	return res
 //}
 //
 //func (a *AstBuilder) VisitTerminal(node antlr.TerminalNode) interface{} {
-//	panic("implement me")
+//	return node.Accept(a)
 //}
 //
 //func (a *AstBuilder) VisitErrorNode(node antlr.ErrorNode) interface{} {
-//	panic("implement me")
+//	return node.Accept(a)
 //}
 
 func (a *AstBuilder) VisitSingleStatement(ctx *SingleStatementContext) interface{} {
@@ -370,9 +382,13 @@ func (a *AstBuilder) VisitQueryNoWith(ctx *QueryNoWithContext) interface{} {
 	if queryTerm == nil {
 		panic(errors.WithStack(errors.New("queryTerm is nil")))
 	}
-	limit := ctx.limit.GetText()
+	var limit *string
+	if ctx.GetLimit() != nil {
+		l := ctx.GetLimit().GetText()
+		limit = &l
+	}
 	// TODO implement rest
-	return tree.NewQuery(queryTerm, &limit)
+	return tree.NewQuery(queryTerm, limit)
 }
 
 func (a *AstBuilder) VisitQueryTermDefault(ctx *QueryTermDefaultContext) interface{} {
@@ -405,6 +421,11 @@ func (a *AstBuilder) VisitSortItem(ctx *SortItemContext) interface{} {
 
 func (a *AstBuilder) VisitQuerySpecification(ctx *QuerySpecificationContext) interface{} {
 	var from tree.IRelation
+	//var selectItems = make([]tree.ISelectItem, len(ctx.AllSelectItem()))
+	//for i, item := range ctx.AllSelectItem() {
+	//	r := a.Visit(item)
+	//	selectItems[i] = r.(tree.ISelectItem)
+	//}
 	selectItems := funk.Map(ctx.AllSelectItem(), func(s ISelectItemContext) tree.ISelectItem {
 		return a.Visit(s).(tree.ISelectItem)
 	}).([]tree.ISelectItem)
@@ -417,6 +438,22 @@ func (a *AstBuilder) VisitQuerySpecification(ctx *QuerySpecificationContext) int
 		from = relations[0]
 	}
 
+	var where tree.IExpression
+	var groupBy tree.IGroupBy
+	var having tree.IExpression
+
+	if w, ok := a.visitIfExist(ctx.where).(tree.IExpression); ok && w != nil {
+		where = w
+	}
+
+	if g, ok := a.visitIfExist(ctx.GroupBy()).(tree.IGroupBy); ok && g != nil {
+		groupBy = g
+	}
+
+	if h, ok := a.visitIfExist(ctx.having).(tree.IExpression); ok && h != nil {
+		having = h
+	}
+
 	return tree.NewQuerySpecification(
 		tree.NewSelectStmt(
 			a.isDistinct(ctx.SetQuantifier()),
@@ -425,9 +462,9 @@ func (a *AstBuilder) VisitQuerySpecification(ctx *QuerySpecificationContext) int
 			a.getTerminalNodeLocation(ctx.SELECT()),
 		),
 		from,
-		a.visitIfExist(ctx.where).(tree.IExpression),
-		a.visitIfExist(ctx.GroupBy()).(tree.IGroupBy),
-		a.visitIfExist(ctx.having).(tree.IExpression),
+		where,
+		groupBy,
+		having,
 		nil,
 		nil,
 	)
@@ -556,19 +593,8 @@ func (a *AstBuilder) VisitParenthesizedRelation(ctx *ParenthesizedRelationContex
 	panic("implement me")
 }
 
-func (a *AstBuilder) VisitExpression(ctx *ExpressionContext) interface{} {
-	return a.Visit(ctx.BooleanExpression())
-}
-
 func (a *AstBuilder) VisitLogicalNot(ctx *LogicalNotContext) interface{} {
 	panic("implement me")
-}
-
-func (a *AstBuilder) VisitPredicated(ctx *PredicatedContext) interface{} {
-	if ctx.Predicate() != nil {
-		return a.Visit(ctx.Predicate())
-	}
-	return a.Visit(ctx.ValueExpression())
 }
 
 func (a *AstBuilder) VisitLogicalBinary(ctx *LogicalBinaryContext) interface{} {
@@ -576,7 +602,12 @@ func (a *AstBuilder) VisitLogicalBinary(ctx *LogicalBinaryContext) interface{} {
 }
 
 func (a *AstBuilder) VisitComparison(ctx *ComparisonContext) interface{} {
-	panic("implement me")
+	return tree.NewComparisonExpression(
+		tree.ExpressionOperator(a.Visit(ctx.ComparisonOperator()).(string)),
+		a.Visit(ctx.GetLeft()).(tree.IExpression),
+		a.Visit(ctx.GetRight()).(tree.IExpression),
+		a.getParserRuleContextLocation(ctx),
+	)
 }
 
 func (a *AstBuilder) VisitQuantifiedComparison(ctx *QuantifiedComparisonContext) interface{} {
@@ -764,7 +795,30 @@ func (a *AstBuilder) VisitTimeZoneString(ctx *TimeZoneStringContext) interface{}
 }
 
 func (a *AstBuilder) VisitComparisonOperator(ctx *ComparisonOperatorContext) interface{} {
-	panic("implement me")
+	if ctx.EQ() != nil {
+		return tree.EQUAL
+	}
+
+	if ctx.NEQ() != nil {
+		return tree.NOT_EQUAL
+	}
+
+	if ctx.LT() != nil {
+		return tree.LESS_THAN
+	}
+
+	if ctx.LTE() != nil {
+		return tree.LESS_THAN_OR_EQUAL
+	}
+
+	if ctx.GT() != nil {
+		return tree.GREATER_THAN
+	}
+
+	if ctx.GTE() != nil {
+		return tree.GREATER_THAN_OR_EQUAL
+	}
+	return nil
 }
 
 func (a *AstBuilder) VisitComparisonQuantifier(ctx *ComparisonQuantifierContext) interface{} {
