@@ -47,3 +47,14 @@ func (s *SampledRelation) SampledRelationType() SampledRelationType {
 func (s *SampledRelation) SamplePercentage() IExpression {
 	return s.samplePercentage
 }
+
+func (s *SampledRelation) Accept(visitor AstVisitor) interface{} {
+	return visitor.VisitSampledRelation(s)
+}
+
+func (s *SampledRelation) Children() []Node {
+	return []Node{
+		s.sampleRelation,
+		s.samplePercentage,
+	}
+}

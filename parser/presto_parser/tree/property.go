@@ -36,3 +36,7 @@ func NewProperty(name IIdentifier, value IExpression, location ...*NodeLocation)
 func (p *Property) Children() []Node {
 	return []Node{p.name, p.value}
 }
+
+func (p *Property) Accept(visitor AstVisitor) interface{} {
+	return visitor.VisitProperty(p)
+}

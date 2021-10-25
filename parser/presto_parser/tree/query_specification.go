@@ -60,10 +60,13 @@ func NewQuerySpecification(
 
 func (q *QuerySpecification) Children() []Node {
 	var children []Node
-	// TODO add all children
 	children = AppendNodeIfNotNull(children, q.selectStmt)
 	children = AppendNodeIfNotNull(children, q.from)
 	children = AppendNodeIfNotNull(children, q.where)
+	children = AppendNodeIfNotNull(children, q.groupBy)
+	children = AppendNodeIfNotNull(children, q.having)
+	children = AppendNodeIfNotNull(children, q.orderBy)
+	children = AppendNodeIfNotNull(children, q.offset)
 
 	return children
 }

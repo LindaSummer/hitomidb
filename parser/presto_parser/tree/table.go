@@ -23,3 +23,11 @@ func NewTable(
 func (t Table) Name() *QualifiedName {
 	return t.name
 }
+
+func (t *Table) Accept(visitor AstVisitor) interface{} {
+	return visitor.VisitTable(t)
+}
+
+func (t *Table) Children() []Node {
+	return EmptyChildren
+}

@@ -297,12 +297,20 @@ func (a *AstBuilder) VisitDescribeOutput(ctx *DescribeOutputContext) interface{}
 func (a *AstBuilder) VisitQuery(ctx *QueryContext) interface{} {
 	body := a.Visit(ctx.QueryNoWith()).(tree.IQuery)
 
-	// TODO fulfill with
-	//if ctx.With() != nil {
-	//	a.Visit(ctx.With())
-	//}
+	var with tree.IWith
 
-	return tree.NewQuery(body.QueryBody(), body.Limit())
+	if ctx.With() != nil {
+		with = a.Visit(ctx.With()).(tree.IWith)
+	}
+
+	return tree.NewQuery(
+		body.QueryBody(),
+		with,
+		body.OrderBy(),
+		body.Limit(),
+		body.Offset(),
+		a.getParserRuleContextLocation(ctx),
+	)
 }
 
 func (a *AstBuilder) VisitWith(ctx *WithContext) interface{} {
@@ -387,8 +395,23 @@ func (a *AstBuilder) VisitQueryNoWith(ctx *QueryNoWithContext) interface{} {
 		l := ctx.GetLimit().GetText()
 		limit = &l
 	}
-	// TODO implement rest
-	return tree.NewQuery(queryTerm, limit)
+
+	var orderBy tree.IOrderBy
+	if len(ctx.AllSortItem()) > 0 {
+		orderBy = tree.NewOrderBy(
+			funk.Map(ctx.AllSortItem(), func(s ISortItemContext) tree.ISortItem {
+				return a.Visit(s).(tree.ISortItem)
+			}).([]tree.ISortItem),
+			a.getParserRuleContextLocation(ctx),
+		)
+	}
+
+	var offset tree.IOffset
+	if ctx.GetOffset() != nil {
+		offset = tree.NewOffset(ctx.GetOffset().GetText(), a.getTokenLocation(ctx.GetOffset()))
+	}
+
+	return tree.NewQuery(queryTerm, nil, orderBy, limit, offset, a.getParserRuleContextLocation(ctx))
 }
 
 func (a *AstBuilder) VisitQueryTermDefault(ctx *QueryTermDefaultContext) interface{} {
@@ -818,6 +841,7 @@ func (a *AstBuilder) VisitComparisonOperator(ctx *ComparisonOperatorContext) int
 	if ctx.GTE() != nil {
 		return tree.GREATER_THAN_OR_EQUAL
 	}
+
 	return nil
 }
 

@@ -18,3 +18,7 @@ func NewSelectItem(location ...*NodeLocation) *SelectItem {
 		BaseNode: NewBaseNode(context.TODO(), location...),
 	}
 }
+
+func (s *SelectItem) Accept(visitor AstVisitor) interface{} {
+	return visitor.VisitSelectItem(s)
+}

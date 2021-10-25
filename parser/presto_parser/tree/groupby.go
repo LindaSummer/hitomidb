@@ -1,6 +1,10 @@
 package tree
 
-import "context"
+import (
+	"context"
+
+	funk "github.com/thoas/go-funk"
+)
 
 type IGroupBy interface {
 	Node
@@ -29,4 +33,14 @@ func NewGroupBy(distinct bool, expressions []IGroupingElement, location ...*Node
 		distinct:    distinct,
 		expressions: expressions,
 	}
+}
+
+func (g *GroupBy) Accept(visitor AstVisitor) interface{} {
+	return visitor.VisitGroupBy(g)
+}
+
+func (g *GroupBy) Children() []Node {
+	return funk.Map(g.expressions, func(element IGroupingElement) Node {
+		return element
+	}).([]Node)
 }

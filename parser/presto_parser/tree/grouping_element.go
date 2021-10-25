@@ -7,3 +7,5 @@ type IGroupingElement interface {
 type GroupingElement struct {
 	*BaseNode
 }
+
+// TODO add accept and children

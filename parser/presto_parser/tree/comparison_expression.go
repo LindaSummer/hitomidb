@@ -51,3 +51,14 @@ func (c *ComparisonExpression) Left() IExpression {
 func (c *ComparisonExpression) Right() IExpression {
 	return c.right
 }
+
+func (c *ComparisonExpression) Accept(visitor AstVisitor) interface{} {
+	return visitor.VisitComparisonExpression(c)
+}
+
+func (c *ComparisonExpression) Children() []Node {
+	return []Node{
+		c.left,
+		c.right,
+	}
+}

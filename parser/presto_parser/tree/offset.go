@@ -23,3 +23,11 @@ func NewOffset(rwoCount string, location ...*NodeLocation) *Offset {
 		rwoCount: rwoCount,
 	}
 }
+
+func (o *Offset) Accept(visitor AstVisitor) interface{} {
+	return visitor.VisitOffset(o)
+}
+
+func (o *Offset) Children() []Node {
+	return EmptyChildren
+}

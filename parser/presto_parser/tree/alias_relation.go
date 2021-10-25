@@ -39,3 +39,11 @@ func (a *AliasRelation) Alias() IIdentifier {
 func (a *AliasRelation) ColumnNames() []IIdentifier {
 	return a.columnNames
 }
+
+func (a *AliasRelation) Accept(visitor AstVisitor) interface{} {
+	return visitor.VisitAliasRelation(a)
+}
+
+func (a *AliasRelation) Children() []Node {
+	return []Node{a.aliasRelation}
+}

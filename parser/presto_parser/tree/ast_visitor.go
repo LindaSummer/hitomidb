@@ -1,22 +1,36 @@
 package tree
 
 type AstVisitor interface {
-	VisitSelect(stmt *SelectStmt) interface{}
+	VisitSelect(stmt ISelectStmt) interface{}
 
-	VisitTableElement(tableElement *TableElement) interface{}
-	VisitSingleColumn(singleColumn *SingleColumn) interface{}
+	VisitTableElement(tableElement ITableElement) interface{}
+	VisitSingleColumn(singleColumn ISingleColumn) interface{}
 
-	VisitStatement(statement *Statement) interface{}
-	VisitQuery(query *Query) interface{}
+	VisitStatement(statement IStatement) interface{}
+	VisitQuery(query IQuery) interface{}
 
-	VisitRelation(relation *Relation) interface{}
-	VisitQueryBody(queryBody *QueryBody) interface{}
-	VisitQueryTable(queryTable *QueryTable) interface{}
-	VisitQuerySpecification(querySpecification *QuerySpecification) interface{}
+	VisitRelation(relation IRelation) interface{}
+	VisitSampledRelation(relation ISampledRelation) interface{}
+	VisitQueryBody(queryBody IQueryBody) interface{}
+	VisitSelectItem(item ISelectItem) interface{}
+	VisitQueryTable(queryTable IQueryTable) interface{}
+	VisitQuerySpecification(querySpecification IQuerySpecification) interface{}
+	VisitWith(with IWith) interface{}
+	VisitWithQuery(withQuery IWithQuery) interface{}
 
-	VisitExpression(expression *Expression) interface{}
-	VisitIdentifier(identifier *Identifier) interface{}
-	VisitDereferenceExpression(expression *DereferenceExpression) interface{}
+	VisitOrderBy(orderBy IOrderBy) interface{}
+	VisitGroupBy(groupBy IGroupBy) interface{}
+	VisitOffset(offset IOffset) interface{}
 
-	VisitSortItem(sortItem *SortItem) interface{}
+	VisitTable(table ITable) interface{}
+	VisitProperty(property IProperty) interface{}
+
+	VisitAliasRelation(alias IAliasRelation) interface{}
+
+	VisitExpression(expression IExpression) interface{}
+	VisitIdentifier(identifier IIdentifier) interface{}
+	VisitDereferenceExpression(expression IDereferenceExpression) interface{}
+	VisitComparisonExpression(expression IComparisonExpression) interface{}
+
+	VisitSortItem(sortItem ISortItem) interface{}
 }
