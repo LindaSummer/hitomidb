@@ -344,9 +344,9 @@ booleanExpression
     | left=valueExpression NOT? LIKE pattern=valueExpression (ESCAPE escape=valueExpression)?  #like
     | left=valueExpression IS NOT? NULL                                                        #nullPredicate
     | left=valueExpression IS NOT? DISTINCT FROM right=valueExpression                         #distinctFrom
-    | NOT booleanExpression                                        #logicalNot
-    | left=booleanExpression operator=AND right=booleanExpression  #logicalBinary
-    | left=booleanExpression operator=OR right=booleanExpression   #logicalBinary
+    | NOT booleanExpression                                                                    #logicalNot
+    | left=booleanExpression operator=AND right=booleanExpression                              #logicalBinary
+    | left=booleanExpression operator=OR right=booleanExpression                               #logicalBinary
     ;
 
 valueExpression

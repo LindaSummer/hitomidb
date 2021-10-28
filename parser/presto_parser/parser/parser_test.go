@@ -32,6 +32,18 @@ func TestSqlParser_invokeParser(t *testing.T) {
 			},
 			want: nil,
 		},
+		{
+			name: "simple-test-join",
+			args: args{
+				name: "statement",
+				sql:  "select b, t1.*, t2.a, c from t3 left join t4 on t3.m=t4.m and t2.l>t3.l where t3.d > t1.c",
+				parseFunction: func(parser *SqlBaseParser) antlr.ParserRuleContext {
+					return parser.SingleStatement()
+				},
+				options: ParserOptions{},
+			},
+			want: nil,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

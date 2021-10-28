@@ -444,11 +444,6 @@ func (a *AstBuilder) VisitSortItem(ctx *SortItemContext) interface{} {
 
 func (a *AstBuilder) VisitQuerySpecification(ctx *QuerySpecificationContext) interface{} {
 	var from tree.IRelation
-	//var selectItems = make([]tree.ISelectItem, len(ctx.AllSelectItem()))
-	//for i, item := range ctx.AllSelectItem() {
-	//	r := a.Visit(item)
-	//	selectItems[i] = r.(tree.ISelectItem)
-	//}
 	selectItems := funk.Map(ctx.AllSelectItem(), func(s ISelectItemContext) tree.ISelectItem {
 		return a.Visit(s).(tree.ISelectItem)
 	}).([]tree.ISelectItem)
@@ -456,9 +451,13 @@ func (a *AstBuilder) VisitQuerySpecification(ctx *QuerySpecificationContext) int
 	relations := funk.Map(ctx.AllRelation(), func(r IRelationContext) tree.IRelation {
 		return a.Visit(r).(tree.IRelation)
 	}).([]tree.IRelation)
+
 	if len(relations) > 0 {
-		// TODO finish JOIN
 		from = relations[0]
+	}
+
+	for i := 1; i < len(relations); i++ {
+		from = tree.NewJoin(tree.IMPLICIT, from, relations[i], nil, a.getParserRuleContextLocation(ctx))
 	}
 
 	var where tree.IExpression
@@ -547,15 +546,55 @@ func (a *AstBuilder) VisitRelationDefault(ctx *RelationDefaultContext) interface
 }
 
 func (a *AstBuilder) VisitJoinRelation(ctx *JoinRelationContext) interface{} {
-	panic("implement me")
+	left := a.Visit(ctx.GetLeft()).(tree.IRelation)
+	var right tree.IRelation
+
+	if ctx.CROSS() != nil {
+		right = a.Visit(ctx.GetRight()).(tree.IRelation)
+		return tree.NewJoin(tree.CROSS, left, right, nil, a.getParserRuleContextLocation(ctx))
+	}
+
+	var criteria tree.IJoinCriteria
+	if ctx.NATURAL() != nil {
+		right = a.Visit(ctx.GetRight()).(tree.IRelation)
+		criteria = tree.NewNaturalJoin(a.getTerminalNodeLocation(ctx.NATURAL()))
+	} else {
+		right = a.Visit(ctx.GetRightRelation()).(tree.IRelation)
+		criteria = a.Visit(ctx.JoinCriteria()).(tree.IJoinCriteria)
+	}
+
+	joinType := a.Visit(ctx.JoinType()).(tree.JoinType)
+	return tree.NewJoin(joinType, left, right, criteria, a.getParserRuleContextLocation(ctx))
 }
 
 func (a *AstBuilder) VisitJoinType(ctx *JoinTypeContext) interface{} {
-	panic("implement me")
+	if ctx.LEFT() != nil {
+		return tree.LEFT
+	}
+
+	if ctx.RIGHT() != nil {
+		return tree.RIGHT
+	}
+
+	if ctx.FULL() != nil {
+		return tree.FULL
+	}
+
+	return tree.INNER
 }
 
 func (a *AstBuilder) VisitJoinCriteria(ctx *JoinCriteriaContext) interface{} {
-	panic("implement me")
+	if ctx.ON() != nil {
+		return tree.NewJoinOn(a.Visit(ctx.BooleanExpression()).(tree.IExpression), a.getParserRuleContextLocation(ctx))
+	}
+
+	if ctx.USING() != nil {
+		identifiers := funk.Map(ctx.AllIdentifier(), func(i IIdentifierContext) tree.IIdentifier {
+			return a.Visit(i).(tree.IIdentifier)
+		}).([]tree.IIdentifier)
+		return tree.NewJoinUsing(identifiers, a.getParserRuleContextLocation(ctx))
+	}
+	return nil
 }
 
 func (a *AstBuilder) VisitSampledRelation(ctx *SampledRelationContext) interface{} {
