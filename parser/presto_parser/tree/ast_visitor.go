@@ -36,6 +36,7 @@ type AstVisitor interface {
 	VisitIdentifier(identifier IIdentifier) interface{}
 	VisitDereferenceExpression(expression IDereferenceExpression) interface{}
 	VisitComparisonExpression(expression IComparisonExpression) interface{}
+	VisitLogicalBinaryExpression(expression ILogicalBinaryExpression) interface{}
 
 	VisitSortItem(sortItem ISortItem) interface{}
 }

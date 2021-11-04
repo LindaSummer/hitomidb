@@ -660,12 +660,27 @@ func (a *AstBuilder) VisitLogicalNot(ctx *LogicalNotContext) interface{} {
 }
 
 func (a *AstBuilder) VisitLogicalBinary(ctx *LogicalBinaryContext) interface{} {
-	panic("implement me")
+	operator := func() tree.BinaryOperator {
+		if ctx.AND() != nil {
+			return tree.AndOperator
+		}
+		if ctx.OR() != nil {
+			return tree.OrOperator
+		}
+		return tree.InvalidOperator
+	}()
+
+	return tree.NewLogicalBinaryExpression(
+		operator,
+		a.Visit(ctx.GetLeft()).(tree.IExpression),
+		a.Visit(ctx.GetRight()).(tree.IExpression),
+		a.getParserRuleContextLocation(ctx),
+	)
 }
 
 func (a *AstBuilder) VisitComparison(ctx *ComparisonContext) interface{} {
 	return tree.NewComparisonExpression(
-		tree.ExpressionOperator(a.Visit(ctx.ComparisonOperator()).(string)),
+		a.Visit(ctx.ComparisonOperator()).(tree.ExpressionOperator),
 		a.Visit(ctx.GetLeft()).(tree.IExpression),
 		a.Visit(ctx.GetRight()).(tree.IExpression),
 		a.getParserRuleContextLocation(ctx),
@@ -858,27 +873,27 @@ func (a *AstBuilder) VisitTimeZoneString(ctx *TimeZoneStringContext) interface{}
 
 func (a *AstBuilder) VisitComparisonOperator(ctx *ComparisonOperatorContext) interface{} {
 	if ctx.EQ() != nil {
-		return tree.EQUAL
+		return tree.Equal
 	}
 
 	if ctx.NEQ() != nil {
-		return tree.NOT_EQUAL
+		return tree.NotEqual
 	}
 
 	if ctx.LT() != nil {
-		return tree.LESS_THAN
+		return tree.LessThan
 	}
 
 	if ctx.LTE() != nil {
-		return tree.LESS_THAN_OR_EQUAL
+		return tree.LessThanOrEqual
 	}
 
 	if ctx.GT() != nil {
-		return tree.GREATER_THAN
+		return tree.GreaterThan
 	}
 
 	if ctx.GTE() != nil {
-		return tree.GREATER_THAN_OR_EQUAL
+		return tree.GreaterThanOrEqual
 	}
 
 	return nil
