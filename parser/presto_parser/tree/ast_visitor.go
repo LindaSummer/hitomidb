@@ -1,24 +1,42 @@
 package tree
 
-import (
-	expr "hitomidb/parser/presto_parser/tree/expression"
-	"hitomidb/parser/presto_parser/tree/relation"
-	"hitomidb/parser/presto_parser/tree/relation/query_body"
-	"hitomidb/parser/presto_parser/tree/select_item"
-	"hitomidb/parser/presto_parser/tree/table_element"
-)
-
 type AstVisitor interface {
-	VisitSelect(stmt *SelectStmt) interface{}
+	VisitSelect(stmt ISelectStmt) interface{}
 
-	VisitTableElement(tableElement *table_element.TableElement) interface{}
-	VisitSingleColumn(singleColumn *select_item.SingleColumn) interface{}
+	VisitTableElement(tableElement ITableElement) interface{}
+	VisitSingleColumn(singleColumn ISingleColumn) interface{}
 
-	VisitRelation(relation *relation.Relation) interface{}
-	VisitQueryBody(queryBody *query_body.QueryBody) interface{}
-	VisitQueryTable(queryTable *query_body.QueryTable) interface{}
-	VisitQuerySpecification(querySpecification *query_body.QuerySpecification) interface{}
+	VisitStatement(statement IStatement) interface{}
+	VisitQuery(query IQuery) interface{}
 
-	VisitExpression(expression *expr.Expression) interface{}
-	VisitIdentifier(identifier *expr.Identifier) interface{}
+	VisitRelation(relation IRelation) interface{}
+	VisitSampledRelation(relation ISampledRelation) interface{}
+	VisitQueryBody(queryBody IQueryBody) interface{}
+	VisitSelectItem(item ISelectItem) interface{}
+	VisitQueryTable(queryTable IQueryTable) interface{}
+	VisitQuerySpecification(querySpecification IQuerySpecification) interface{}
+	VisitWith(with IWith) interface{}
+	VisitWithQuery(withQuery IWithQuery) interface{}
+	VisitJoin(join IJoin) interface{}
+	VisitJoinOn(on IJoinOn) interface{}
+	VisitJoinUsing(using IJoinUsing) interface{}
+	VisitNaturalJoin(join INaturalJoin) interface{}
+
+	VisitOrderBy(orderBy IOrderBy) interface{}
+	VisitGroupBy(groupBy IGroupBy) interface{}
+	VisitOffset(offset IOffset) interface{}
+
+	VisitTable(table ITable) interface{}
+	VisitColumnDefinition(definition IColumnDefinition) interface{}
+	VisitProperty(property IProperty) interface{}
+
+	VisitAliasRelation(alias IAliasRelation) interface{}
+
+	VisitExpression(expression IExpression) interface{}
+	VisitIdentifier(identifier IIdentifier) interface{}
+	VisitDereferenceExpression(expression IDereferenceExpression) interface{}
+	VisitComparisonExpression(expression IComparisonExpression) interface{}
+	VisitLogicalBinaryExpression(expression ILogicalBinaryExpression) interface{}
+
+	VisitSortItem(sortItem ISortItem) interface{}
 }

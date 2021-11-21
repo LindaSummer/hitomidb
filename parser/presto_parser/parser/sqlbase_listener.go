@@ -343,41 +343,41 @@ type SqlBaseListener interface {
 	// EnterParenthesizedRelation is called when entering the parenthesizedRelation production.
 	EnterParenthesizedRelation(c *ParenthesizedRelationContext)
 
-	// EnterExpression is called when entering the expression production.
-	EnterExpression(c *ExpressionContext)
+	// EnterValueExp is called when entering the valueExp production.
+	EnterValueExp(c *ValueExpContext)
+
+	// EnterBooleanExp is called when entering the booleanExp production.
+	EnterBooleanExp(c *BooleanExpContext)
 
 	// EnterLogicalNot is called when entering the logicalNot production.
 	EnterLogicalNot(c *LogicalNotContext)
 
-	// EnterPredicated is called when entering the predicated production.
-	EnterPredicated(c *PredicatedContext)
-
-	// EnterLogicalBinary is called when entering the logicalBinary production.
-	EnterLogicalBinary(c *LogicalBinaryContext)
-
 	// EnterComparison is called when entering the comparison production.
 	EnterComparison(c *ComparisonContext)
-
-	// EnterQuantifiedComparison is called when entering the quantifiedComparison production.
-	EnterQuantifiedComparison(c *QuantifiedComparisonContext)
-
-	// EnterBetween is called when entering the between production.
-	EnterBetween(c *BetweenContext)
-
-	// EnterInList is called when entering the inList production.
-	EnterInList(c *InListContext)
-
-	// EnterInSubquery is called when entering the inSubquery production.
-	EnterInSubquery(c *InSubqueryContext)
 
 	// EnterLike is called when entering the like production.
 	EnterLike(c *LikeContext)
 
-	// EnterNullPredicate is called when entering the nullPredicate production.
-	EnterNullPredicate(c *NullPredicateContext)
+	// EnterInSubquery is called when entering the inSubquery production.
+	EnterInSubquery(c *InSubqueryContext)
 
 	// EnterDistinctFrom is called when entering the distinctFrom production.
 	EnterDistinctFrom(c *DistinctFromContext)
+
+	// EnterInList is called when entering the inList production.
+	EnterInList(c *InListContext)
+
+	// EnterNullPredicate is called when entering the nullPredicate production.
+	EnterNullPredicate(c *NullPredicateContext)
+
+	// EnterBetween is called when entering the between production.
+	EnterBetween(c *BetweenContext)
+
+	// EnterQuantifiedComparison is called when entering the quantifiedComparison production.
+	EnterQuantifiedComparison(c *QuantifiedComparisonContext)
+
+	// EnterLogicalBinary is called when entering the logicalBinary production.
+	EnterLogicalBinary(c *LogicalBinaryContext)
 
 	// EnterValueExpressionDefault is called when entering the valueExpressionDefault production.
 	EnterValueExpressionDefault(c *ValueExpressionDefaultContext)
@@ -961,41 +961,41 @@ type SqlBaseListener interface {
 	// ExitParenthesizedRelation is called when exiting the parenthesizedRelation production.
 	ExitParenthesizedRelation(c *ParenthesizedRelationContext)
 
-	// ExitExpression is called when exiting the expression production.
-	ExitExpression(c *ExpressionContext)
+	// ExitValueExp is called when exiting the valueExp production.
+	ExitValueExp(c *ValueExpContext)
+
+	// ExitBooleanExp is called when exiting the booleanExp production.
+	ExitBooleanExp(c *BooleanExpContext)
 
 	// ExitLogicalNot is called when exiting the logicalNot production.
 	ExitLogicalNot(c *LogicalNotContext)
 
-	// ExitPredicated is called when exiting the predicated production.
-	ExitPredicated(c *PredicatedContext)
-
-	// ExitLogicalBinary is called when exiting the logicalBinary production.
-	ExitLogicalBinary(c *LogicalBinaryContext)
-
 	// ExitComparison is called when exiting the comparison production.
 	ExitComparison(c *ComparisonContext)
-
-	// ExitQuantifiedComparison is called when exiting the quantifiedComparison production.
-	ExitQuantifiedComparison(c *QuantifiedComparisonContext)
-
-	// ExitBetween is called when exiting the between production.
-	ExitBetween(c *BetweenContext)
-
-	// ExitInList is called when exiting the inList production.
-	ExitInList(c *InListContext)
-
-	// ExitInSubquery is called when exiting the inSubquery production.
-	ExitInSubquery(c *InSubqueryContext)
 
 	// ExitLike is called when exiting the like production.
 	ExitLike(c *LikeContext)
 
-	// ExitNullPredicate is called when exiting the nullPredicate production.
-	ExitNullPredicate(c *NullPredicateContext)
+	// ExitInSubquery is called when exiting the inSubquery production.
+	ExitInSubquery(c *InSubqueryContext)
 
 	// ExitDistinctFrom is called when exiting the distinctFrom production.
 	ExitDistinctFrom(c *DistinctFromContext)
+
+	// ExitInList is called when exiting the inList production.
+	ExitInList(c *InListContext)
+
+	// ExitNullPredicate is called when exiting the nullPredicate production.
+	ExitNullPredicate(c *NullPredicateContext)
+
+	// ExitBetween is called when exiting the between production.
+	ExitBetween(c *BetweenContext)
+
+	// ExitQuantifiedComparison is called when exiting the quantifiedComparison production.
+	ExitQuantifiedComparison(c *QuantifiedComparisonContext)
+
+	// ExitLogicalBinary is called when exiting the logicalBinary production.
+	ExitLogicalBinary(c *LogicalBinaryContext)
 
 	// ExitValueExpressionDefault is called when exiting the valueExpressionDefault production.
 	ExitValueExpressionDefault(c *ValueExpressionDefaultContext)

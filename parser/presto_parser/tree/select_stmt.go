@@ -2,20 +2,24 @@ package tree
 
 import (
 	"fmt"
-	"hitomidb/parser/presto_parser/tree/select_item"
-	"hitomidb/parser/presto_parser/util"
 )
+
+type ISelectStmt interface {
+	Node
+	Distinct() bool
+	SelectItems() []ISelectItem
+}
 
 type SelectStmt struct {
 	*BaseNode
 	distinct    bool
-	selectItems []*select_item.SelectItem
+	selectItems []ISelectItem
 }
 
-func NewSelectStmt(distinct bool, selectItems []*select_item.SelectItem, location ...*NodeLocation) *SelectStmt {
+func NewSelectStmt(distinct bool, selectItems []ISelectItem, location ...*NodeLocation) *SelectStmt {
 	return &SelectStmt{
 		BaseNode: &BaseNode{
-			location: util.GetOptionalNodeLocation(location...),
+			location: GetOptionalNodeLocation(location...),
 		},
 		distinct:    distinct,
 		selectItems: selectItems,
@@ -26,7 +30,7 @@ func (s *SelectStmt) Distinct() bool {
 	return s.distinct
 }
 
-func (s *SelectStmt) SelectItems() []*select_item.SelectItem {
+func (s *SelectStmt) SelectItems() []ISelectItem {
 	return s.selectItems
 }
 
@@ -35,7 +39,7 @@ func (s *SelectStmt) Accept(visitor AstVisitor) interface{} {
 }
 
 func (s *SelectStmt) GetChildren() []Node {
-	return util.TransformToNodeArray(s.selectItems)
+	return TransformToNodeArray(s.selectItems)
 }
 
 func (s *SelectStmt) String() string {
