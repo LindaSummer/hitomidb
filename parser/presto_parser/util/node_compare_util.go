@@ -214,70 +214,75 @@ func (n *nodeDataComparer) VisitWithQuery(lhs tree.IWithQuery) interface{} {
 			n.comparePosition)
 }
 
-func (n *nodeDataComparer) VisitJoin(join tree.IJoin) interface{} {
+func (n *nodeDataComparer) VisitJoin(lhs tree.IJoin) interface{} {
+	rhs, ok := n.rhs.(tree.IJoin)
+	if !ok || rhs == nil || lhs == nil {
+		return false
+	}
+
+	return lhs.JoinType() == rhs.JoinType()
+}
+
+func (n *nodeDataComparer) VisitJoinOn(lhs tree.IJoinOn) interface{} {
 	panic("implement me")
 }
 
-func (n *nodeDataComparer) VisitJoinOn(on tree.IJoinOn) interface{} {
+func (n *nodeDataComparer) VisitJoinUsing(lhs tree.IJoinUsing) interface{} {
 	panic("implement me")
 }
 
-func (n *nodeDataComparer) VisitJoinUsing(using tree.IJoinUsing) interface{} {
+func (n *nodeDataComparer) VisitNaturalJoin(lhs tree.INaturalJoin) interface{} {
 	panic("implement me")
 }
 
-func (n *nodeDataComparer) VisitNaturalJoin(join tree.INaturalJoin) interface{} {
+func (n *nodeDataComparer) VisitOrderBy(lhs tree.IOrderBy) interface{} {
 	panic("implement me")
 }
 
-func (n *nodeDataComparer) VisitOrderBy(orderBy tree.IOrderBy) interface{} {
+func (n *nodeDataComparer) VisitGroupBy(lhs tree.IGroupBy) interface{} {
 	panic("implement me")
 }
 
-func (n *nodeDataComparer) VisitGroupBy(groupBy tree.IGroupBy) interface{} {
+func (n *nodeDataComparer) VisitOffset(lhs tree.IOffset) interface{} {
 	panic("implement me")
 }
 
-func (n *nodeDataComparer) VisitOffset(offset tree.IOffset) interface{} {
+func (n *nodeDataComparer) VisitTable(lhs tree.ITable) interface{} {
 	panic("implement me")
 }
 
-func (n *nodeDataComparer) VisitTable(table tree.ITable) interface{} {
+func (n *nodeDataComparer) VisitColumnDefinition(lhs tree.IColumnDefinition) interface{} {
 	panic("implement me")
 }
 
-func (n *nodeDataComparer) VisitColumnDefinition(definition tree.IColumnDefinition) interface{} {
+func (n *nodeDataComparer) VisitProperty(lhs tree.IProperty) interface{} {
 	panic("implement me")
 }
 
-func (n *nodeDataComparer) VisitProperty(property tree.IProperty) interface{} {
+func (n *nodeDataComparer) VisitAliasRelation(lhs tree.IAliasRelation) interface{} {
 	panic("implement me")
 }
 
-func (n *nodeDataComparer) VisitAliasRelation(alias tree.IAliasRelation) interface{} {
+func (n *nodeDataComparer) VisitExpression(lhs tree.IExpression) interface{} {
 	panic("implement me")
 }
 
-func (n *nodeDataComparer) VisitExpression(expression tree.IExpression) interface{} {
+func (n *nodeDataComparer) VisitIdentifier(lhs tree.IIdentifier) interface{} {
 	panic("implement me")
 }
 
-func (n *nodeDataComparer) VisitIdentifier(identifier tree.IIdentifier) interface{} {
+func (n *nodeDataComparer) VisitDereferenceExpression(lhs tree.IDereferenceExpression) interface{} {
 	panic("implement me")
 }
 
-func (n *nodeDataComparer) VisitDereferenceExpression(expression tree.IDereferenceExpression) interface{} {
+func (n *nodeDataComparer) VisitComparisonExpression(lhs tree.IComparisonExpression) interface{} {
 	panic("implement me")
 }
 
-func (n *nodeDataComparer) VisitComparisonExpression(expression tree.IComparisonExpression) interface{} {
+func (n *nodeDataComparer) VisitLogicalBinaryExpression(lhs tree.ILogicalBinaryExpression) interface{} {
 	panic("implement me")
 }
 
-func (n *nodeDataComparer) VisitLogicalBinaryExpression(expression tree.ILogicalBinaryExpression) interface{} {
-	panic("implement me")
-}
-
-func (n *nodeDataComparer) VisitSortItem(sortItem tree.ISortItem) interface{} {
+func (n *nodeDataComparer) VisitSortItem(lhs tree.ISortItem) interface{} {
 	panic("implement me")
 }
